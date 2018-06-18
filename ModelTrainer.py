@@ -24,9 +24,6 @@ class ModelTrainer(object):
         start_time = time.time()
         for step in range(0, num_iterations):
             targets, contexts, times, labels = self.dataiter.get_batch()
-            # print(model.get_loss(targets, contexts, times, labels))
-            # sess.run(model.get_loss, feed_dict={"targets":targets, "contexts":contexts, "times":times, "labels":labels})
-
             feed_dict = {
                 targets_placeholder: targets,
                 contexts_placeholder: contexts,
