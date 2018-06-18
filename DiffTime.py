@@ -11,10 +11,9 @@ class DiffTime(Model):
         self.h2_dim = 100
         self.prod_dim = 100
         self.embedding_dim = 300
-        first_layer_dim = self.layer_dims[0]
-        RANDOFFSET = np.random.rand(first_layer_dim, 1)
-        RANDA = (1.0 / np.sqrt(2.0)) * np.random.randn(first_layer_dim, 1)
-        RANDB = (-1 * RANDOFFSET * RANDA).reshape((first_layer_dim,))
+        RANDOFFSET = np.random.rand(self.h1_dim, 1)
+        RANDA = (1.0 / np.sqrt(2.0)) * np.random.randn(self.h1_dim, 1)
+        RANDB = (-1 * RANDOFFSET * RANDA).reshape((self.h1_dim,))
 
         with tf.variable_scope("targemb"):
             tf.get_variable("targetemb", [self.vocab_size, self.embedding_dim])
@@ -53,7 +52,6 @@ class DiffTime(Model):
         with tf.variable_scope("targemb", reuse=True):
             targetemb = tf.get_variable("targetemb")
         target_embeddings = tf.nn.embedding_lookup(targetemb, target)
-        # print("shapes", targetemb.shape, targetemb2.shape)
         tv = self.get_time_vector(time)
 
         mat = self.embedding2matrix(target_embeddings)
@@ -68,7 +66,6 @@ class DiffTime(Model):
         with tf.variable_scope("contemb", reuse=True):
             contemb = tf.get_variable("contextemb")
         context_embeddings = tf.nn.embedding_lookup(contemb, context)
-        # print("shapes", targetemb.shape, targetemb2.shape)
         tv = self.get_time_vector(time)
 
         mat = self.embedding2matrix(context_embeddings)
