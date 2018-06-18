@@ -1,19 +1,12 @@
-import sys
-import os
+
 import tensorflow as tf
 from DiffTime import DiffTime
 from ModelTrainer import ModelTrainer
-
-if os.name == "nt":
-    sys.path.append(r"C:\Users\Alex Rosenfeld\PycharmProjects\aftertime_tf\\")
-else:
-    sys.path.append("TACC path")
-
-from main_network.data_generator.GoogleBooksGenerator import GoogleBooksGenerator
+from TACCDataIterator import TACCDataIterator
 
 vocab_size = 100000
 
-dataiter = GoogleBooksGenerator()
+dataiter = TACCDataIterator()
 model = DiffTime(vocab_size)
 
 with tf.Session() as sess:
