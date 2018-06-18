@@ -4,7 +4,7 @@ import tensorflow as tf
 import time
 
 class ModelTrainer(object):
-    def __init__(self, sess, dataiter:DataTterator, model:Model):
+    def __init__(self, sess:tf.Session, dataiter:DataTterator, model:Model):
         self.dataiter = dataiter
         self.model = model
         self.sess = sess
