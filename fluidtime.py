@@ -2,7 +2,7 @@
 import tensorflow as tf
 from DiffTime import DiffTime
 from ModelTrainer import ModelTrainer
-from TACCDataIterator import TACCDataIterator
+from DumbIterator import DumbIterator
 from ModelEval import ModelEval
 
 vocab_size = 100000
@@ -11,7 +11,7 @@ num_iterations = 99000
 num_iter_per_epoch = 100
 
 
-dataiter = TACCDataIterator()
+dataiter = DumbIterator(batch_size, vocab_size)
 
 
 
