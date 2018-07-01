@@ -77,8 +77,6 @@ class DiffTime(Model):
         return out
 
     def loss_function(self, features, labels):
-        # | ||
-        #|| |_
         loss = tf.nn.sigmoid_cross_entropy_with_logits(
             labels=labels, logits=features)
         return tf.reduce_mean(loss)
