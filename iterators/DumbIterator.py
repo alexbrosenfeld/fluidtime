@@ -1,5 +1,7 @@
-from DataIterator import DataTterator
 import random
+
+from iterators.DataIterator import DataTterator
+
 
 class DumbIterator(DataTterator):
     def __init__(self, batch_size, vocab_size):

@@ -1,7 +1,7 @@
-import sys
 import os
+import sys
 
-from DataIterator import DataTterator
+from iterators.DataIterator import DataTterator
 
 if os.name == "nt":
     sys.path.append(r"C:\Users\Alex Rosenfeld\PycharmProjects\aftertime_tf\\")

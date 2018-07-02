@@ -1,9 +1,9 @@
 
 import tensorflow as tf
 
-from DumbIterator import DumbIterator
 from ModelEval import ModelEval
 from ModelTrainer import ModelTrainer
+from iterators.DumbIterator import DumbIterator
 from models.DiffTime import DiffTime
 
 vocab_size = 100000

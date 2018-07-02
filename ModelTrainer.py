@@ -2,7 +2,7 @@ import time
 
 import tensorflow as tf
 
-from DataIterator import DataTterator
+from iterators.DataIterator import DataTterator
 from models.Model import Model
 
 
