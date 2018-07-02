@@ -1,7 +1,10 @@
-from DataIterator import DataTterator
-from Model import Model
-import tensorflow as tf
 import time
+
+import tensorflow as tf
+
+from DataIterator import DataTterator
+from models.Model import Model
+
 
 class ModelTrainer(object):
     def __init__(self, sess:tf.Session, dataiter:DataTterator, model:Model):

@@ -1,6 +1,8 @@
 import numpy as np
 import tensorflow as tf
-from Model import Model
+
+from models.Model import Model
+
 
 class DiffTime(Model):
     def __init__(self, vocab_size):

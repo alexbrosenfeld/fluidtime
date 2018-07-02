@@ -1,9 +1,10 @@
 
 import tensorflow as tf
-from DiffTime import DiffTime
-from ModelTrainer import ModelTrainer
+
 from DumbIterator import DumbIterator
 from ModelEval import ModelEval
+from ModelTrainer import ModelTrainer
+from models.DiffTime import DiffTime
 
 vocab_size = 100000
 batch_size = 10000
