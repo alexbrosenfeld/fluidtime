@@ -7,7 +7,8 @@ from ModelEval import ModelEval
 
 vocab_size = 100000
 batch_size = 10000
-num_iterations = 99000
+# num_iterations = 99000
+num_iterations = 200
 num_iter_per_epoch = 100
 
 

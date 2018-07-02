@@ -40,7 +40,7 @@ class DiffTime(Model):
         time_reshape = tf.reshape(time, (-1, 1))
 
         h1 = tf.layers.dense(time_reshape, self.h1_dim, name="h1", activation=tf.tanh, reuse=True)
-        h2 = tf.layers.dense(h1, self.h2_dim, name="h1", activation=tf.tanh, reuse=True)
+        h2 = tf.layers.dense(h1, self.h2_dim, name="h2", activation=tf.tanh, reuse=True)
         return h2
 
     def embedding2matrix(self, embedding):
