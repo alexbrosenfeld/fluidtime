@@ -21,6 +21,9 @@ class ModelTrainer(object):
         tf.summary.scalar('loss', loss)
         train_op = optimizer.minimize(loss)
 
+        init = tf.global_variables_initializer()
+        self.sess.run(init)
+
         start_time = time.time()
         for step in range(0, num_iterations):
             targets, contexts, times, labels = self.dataiter.get_batch()
