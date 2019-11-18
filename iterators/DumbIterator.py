@@ -1,8 +1,8 @@
 import random
 
-from iterators.DataIterator import DataTterator
+from iterators.DataIterator import DataIterator
 
-class DumbIterator(DataTterator):
+class DumbIterator(DataIterator):
     """This class is to demonstrate the format that your DataIterator should produce.
     """
     def __init__(self, batch_size, vocab_size):

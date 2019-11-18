@@ -2,12 +2,12 @@ import time
 
 import tensorflow as tf
 
-from iterators.DataIterator import DataTterator
+from iterators.DataIterator import DataIterator
 from models.Model import Model
 
 
 class ModelTrainer(object):
-    def __init__(self, sess:tf.Session, dataiter:DataTterator, model:Model):
+    def __init__(self, sess:tf.Session, dataiter:DataIterator, model:Model):
         self.dataiter = dataiter
         self.model = model
         self.sess = sess

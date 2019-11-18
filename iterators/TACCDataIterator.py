@@ -1,7 +1,7 @@
 import os
 import sys
 
-from iterators.DataIterator import DataTterator
+from iterators.DataIterator import DataIterator
 
 if os.name == "nt":
     sys.path.append(r"C:\Users\Alex Rosenfeld\PycharmProjects\aftertime_tf\\")
@@ -12,7 +12,7 @@ from main_network.data_generator.GoogleBooksGenerator import GoogleBooksGenerato
 from main_network.constants.EngFicGooBooks import EngFicGooBooks
 
 
-class TACCDataIterator(DataTterator):
+class TACCDataIterator(DataIterator):
     """Ignore this class. I'm using it as a way to test some of the functions with real data.
     """
     def __init__(self, batch_size):
