@@ -1,0 +1,10 @@
+bird	crow dove eagle goose hawk owl pigeon robin sparrow swan
+building	castle cathedral cottage hospital hotel library villa
+clothing	cloak coat dress glove hat jacket robe scarf shirt vest
+fruit	apple cherry grape lemon lime pear plum
+furniture	bed chair couch desk dresser sofa table wardrobe
+ground_mammal	bear beaver bull cat cow deer elephant fox goat horse lion pig rabbit rat sheep squirrel tiger
+tool	axe chisel fork hammer hatchet knife rake saw shovel spade spoon wrench
+tree	birch cedar elm oak pine willow
+vehicle	car ferry frigate jet train van
+weapon	cannon dagger gun musket pistol spear sword

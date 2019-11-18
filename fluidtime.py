@@ -1,27 +1,30 @@
 
 import tensorflow as tf
 
-from ModelEval import ModelEval
-from ModelTrainer import ModelTrainer
-from iterators.DumbIterator import DumbIterator
 from iterators.COHASampleIterator import COHASampleIterator
 from models.DiffTime import DiffTime
+from evaluation.SyntheticTask import SyntheticTask
 
 # vocab_size = 100000
-vocab_size = 1000
+vocab_size = 100000
 # batch_size = 10000
 batch_size = 10
 # num_iterations = 99000
-num_iterations = 100
-num_iter_per_epoch = 2
+num_iterations = 1000
+num_iter_per_epoch = 10
 
 
 
 
 
 def main():
-    # dataiter = DumbIterator(batch_size, vocab_size)
-    dataiter = COHASampleIterator(batch_size, 1900, 2009, vocab_size, genre="nf")
+
+    synthetic_task = 1
+    synth_task = None
+    if synthetic_task in {1, 2, 3}:
+        synth_task = SyntheticTask(synthetic_task)
+
+    dataiter = COHASampleIterator(batch_size, 1900, 2009, vocab_size, genre=None, synth_task=synth_task)
     # print(dataiter.get_batch())
     #
     # exit()
@@ -31,9 +34,8 @@ def main():
 
         model.train(sess, dataiter, batch_size, num_iterations, num_iter_per_epoch)
 
-        # trainer = ModelTrainer(sess, dataiter, model)
-        # trainer.train_model(batch_size, num_iterations, num_iter_per_epoch)
-        modeleval = ModelEval(sess, model)
+        synth_task.evaluate(sess, model)
+        # model_eval = ModelEval(sess, model)
 
 if __name__ == '__main__':
     main()

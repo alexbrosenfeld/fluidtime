@@ -8,6 +8,9 @@ class Model(object):
     def get_loss(self, targets, contexts, times, labels):
         raise NotImplementedError
 
+    def get_target_vector(self, target, time):
+        raise NotImplementedError
+
     def train(self, sess, data_iterator, batch_size:int, num_iterations:int, num_iter_per_epoch:int):
         targets_placeholder = tf.placeholder(tf.int32, shape=(batch_size,))
         contexts_placeholder = tf.placeholder(tf.int32, shape=(batch_size,))
