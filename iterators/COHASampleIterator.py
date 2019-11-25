@@ -1,6 +1,6 @@
 from random import randint, random
 
-from keras.preprocessing.sequence import skipgrams
+from keras.preprocessing.sequence import skipgrams, make_sampling_table
 from keras.preprocessing.text import Tokenizer
 
 from evaluation.SyntheticTask import SyntheticTask
@@ -85,8 +85,13 @@ class COHASampleIterator(DataIterator):
                     line = " ".join(adjusted_line)
 
                 wids = self.tokenizer.texts_to_sequences([line])[0]
-                #TODO: make sampling table
-                pairs, labels = skipgrams(wids, self.vocab_size, window_size=5, negative_samples=5)
+                # Note that make_sampling_table estimates the sample probabilities using Zipf's law and does not
+                # use the word counts in determining probabilities.
+                sampling_table = make_sampling_table(self.vocab_size)
+                #TODO: Add negative sample option.
+                #Note: skipgrams does not weigh sampling probabilities by unigram probability.
+                #TODO: fix negative sampling
+                pairs, labels = skipgrams(wids, self.vocab_size, window_size=self.args.window_size, negative_samples=5, sampling_table=sampling_table)
                 self.curr_targets += [pair[0] for pair in pairs]
                 self.curr_contexts += [pair[1] for pair in pairs]
                 self.curr_labels += labels

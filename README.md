@@ -3,19 +3,31 @@
 Source code for our NAACL paper "Deep Neural Models of Semantic Shift".
 
 
-
+##Installation
 
 ##Training
 
+Run the example code using the following command:
+
+    python3 fluidtime.py <arguments>
 
 ##Evaluations
 
+This example code produces 4 evaluations:
+
+###Synchronic Evaluation
+
+
+###Synthetic Evaluation
+
+###Nearest Neighbor Evaluation
+
+###Speed graphs
 
 
 
 
-
-
+##Citation
 
 If you found this helpful, please consider citing our paper:
 

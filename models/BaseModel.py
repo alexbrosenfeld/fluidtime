@@ -51,3 +51,5 @@ class BaseModel(object):
         print()
         print("Training complete.")
         print()
+
+    #TODO: Figure out a way to save the model.
