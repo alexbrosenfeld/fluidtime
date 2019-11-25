@@ -1,8 +1,9 @@
 class DataIterator(object):
-    def __init__(self, batch_size, start_year, end_year):
-        self.batch_size = batch_size
-        self.start_year = start_year
-        self.end_year = end_year
+    def __init__(self, args):
+        self.args = args
+        self.batch_size = args.batch_size
+        self.start_year = args.start_year
+        self.end_year = args.end_year
         pass
 
     def year2dec(self, year):

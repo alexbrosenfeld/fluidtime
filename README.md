@@ -3,6 +3,20 @@
 Source code for our NAACL paper "Deep Neural Models of Semantic Shift".
 
 
+
+
+##Training
+
+
+##Evaluations
+
+
+
+
+
+
+
+
 If you found this helpful, please consider citing our paper:
 
     @inproceedings{rosenfeld-erk-2018-deep,

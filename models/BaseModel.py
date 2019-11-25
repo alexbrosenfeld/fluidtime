@@ -1,7 +1,9 @@
 import tensorflow as tf
 import time
 
-class Model(object):
+from iterators.DataIterator import DataIterator
+
+class BaseModel(object):
     def __init__(self):
         pass
 
@@ -11,7 +13,8 @@ class Model(object):
     def get_target_vector(self, target, time):
         raise NotImplementedError
 
-    def train(self, sess, data_iterator, batch_size:int, num_iterations:int, num_iter_per_epoch:int):
+    def train(self, sess, data_iterator:DataIterator, batch_size:int, num_iterations:int, reporting_freq:int):
+
         targets_placeholder = tf.placeholder(tf.int32, shape=(batch_size,))
         contexts_placeholder = tf.placeholder(tf.int32, shape=(batch_size,))
         times_placeholder = tf.placeholder(tf.float32, shape=(batch_size,))
@@ -24,6 +27,9 @@ class Model(object):
 
         init = tf.global_variables_initializer()
         sess.run(init)
+
+        print("Commencing training:")
+        print()
 
         start_time = time.time()
         for step in range(0, num_iterations):
@@ -39,5 +45,9 @@ class Model(object):
 
             duration = time.time() - start_time
 
-            if step % num_iter_per_epoch == 0:
+            if step % reporting_freq == 0:
                 print('Step %d: loss = %.4f (%.3f sec)' % (step, loss_value, duration))
+
+        print()
+        print("Training complete.")
+        print()

@@ -1,10 +1,10 @@
 import numpy as np
 import tensorflow as tf
 
-from models.Model import Model
+from models.BaseModel import BaseModel
 
 
-class DiffTime(Model):
+class DiffTime(BaseModel):
     def __init__(self, vocab_size):
         super().__init__()
         self.vocab_size = vocab_size
@@ -78,7 +78,8 @@ class DiffTime(Model):
         out = tf.layers.dense(matmul, self.output_dim, name="last_out", reuse=True)
         return out
 
-    def loss_function(self, features, labels):
+    @staticmethod
+    def _loss_function(features, labels):
         loss = tf.nn.sigmoid_cross_entropy_with_logits(
             labels=labels, logits=features)
         return tf.reduce_mean(loss)
@@ -88,5 +89,5 @@ class DiffTime(Model):
         cont_vect = self.get_context_vector(contexts, times)
         mult_vect = tf.multiply(targ_vect, cont_vect)
         logits = tf.reduce_sum(mult_vect, 1)
-        loss = self.loss_function(logits, labels)
+        loss = self._loss_function(logits, labels)
         return loss

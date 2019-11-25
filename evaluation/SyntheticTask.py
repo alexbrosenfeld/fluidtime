@@ -1,5 +1,6 @@
 import numpy as np
 
+from evaluation.BaseEndTask import BaseEndTask
 
 class Datum:
     def __init__(self, w1, w2, m, s):
@@ -13,7 +14,12 @@ class Datum:
         self.w2_index = None
         self.w1_syns_indices = {}
         self.w2_syns_indices = {}
+
         self.form_sigmoids()
+
+    @staticmethod
+    def _sigmoid(x):
+        return np.reciprocal(1+np.exp(-x))
 
     def form_sigmoids(self):
         self.w1_probs = {}
@@ -21,7 +27,7 @@ class Datum:
 
         years = np.arange(1900, 2010)
 
-        self.w1_prob_array = np.reciprocal(1 + np.exp(-self.s * (years - float(self.m))))
+        self.w1_prob_array = self._sigmoid(-self.s * (years - float(self.m)))
         self.w2_prob_array = 1.0 - self.w1_prob_array
 
         for yind, year in enumerate(range(1900, 2010)):
@@ -29,8 +35,9 @@ class Datum:
             self.w2_probs[year] = self.w2_prob_array[yind]
 
 
-class SyntheticTask:
-    def __init__(self, fold):
+class SyntheticTask(BaseEndTask):
+    def __init__(self, fold, args):
+        super().__init__(args)
         self.fold = fold
         self.synth_task_data = []
         self.synth_task_w1_map = {}
@@ -63,6 +70,17 @@ class SyntheticTask:
             datum.w1_syns = self.iso_words[self.word2bless[datum.w1]]
             datum.w2_syns = self.iso_words[self.word2bless[datum.w2]]
 
+    def modify_data(self, word2id):
+        for datum in self.synth_task_data:
+            if datum.w1 in word2id:
+                datum.w1_index = word2id[datum.w1]
+            if datum.w2 in word2id:
+                datum.w2_index = word2id[datum.w2]
+            datum.w1_syns_indices = set(word2id[w] for w in datum.w1_syns if
+                                        w in word2id)
+            datum.w2_syns_indices = set(word2id[w] for w in datum.w2_syns if
+                                        w in word2id)
+
     def add_datum(self, w1, w2, m, s):
         new_index = len(self.synth_task_data)
         datum = Datum(w1, w2, m, s)
@@ -82,6 +100,8 @@ class SyntheticTask:
         years = np.arange(1900, 2010)
         years_dec = (years - 1900.0) / (2009.0 - 1900.0)
         num_years = len(years)
+
+
         targets_placeholder = tf.placeholder(tf.int32, shape=(num_years,))
         synonym_placeholder = tf.placeholder(tf.int32, shape=(num_years,))
         times_placeholder = tf.placeholder(tf.float32, shape=(num_years,))
@@ -90,17 +110,26 @@ class SyntheticTask:
         target_vector = tf.nn.l2_normalize(target_vector, 1)
         syns_vector = model.get_target_vector(synonym_placeholder, times_placeholder)
         syns_vector = tf.nn.l2_normalize(syns_vector, 1)
-        cos = tf.reduce_sum(tf.multiply(target_vector, syns_vector), axis=1)
+        cosine_tensor = tf.reduce_sum(tf.multiply(target_vector, syns_vector), axis=1)
 
+        average_score = 0.0
+        num_non_na_scores = 0
+
+        print("Synthetic Task Results")
+        print()
         for datum in self.synth_task_data:
-            pos_vector = self.standardize(datum.w1_prob_array)
+            gold_vector = self.standardize(datum.w1_prob_array)
             if datum.w1_index is None:
+                print(datum.w1, datum.w2, "n/a")
                 continue
             if datum.w2_index is None:
+                print(datum.w1, datum.w2, "n/a")
                 continue
             if datum.w1_syns_indices == set():
+                print(datum.w1, datum.w2, "n/a")
                 continue
             if datum.w2_syns_indices == set():
+                print(datum.w1, datum.w2, "n/a")
                 continue
             pos_avg = np.zeros((num_years,), dtype=np.float)
             for syn_index in datum.w1_syns_indices:
@@ -109,7 +138,7 @@ class SyntheticTask:
                     synonym_placeholder: num_years * [syn_index],
                     times_placeholder: years_dec,
                 }
-                cosines = sess.run(cos, feed_dict=feed_dict)
+                cosines = sess.run(cosine_tensor, feed_dict=feed_dict)
                 pos_avg += cosines
             pos_avg /= len(datum.w1_syns_indices)
 
@@ -120,13 +149,19 @@ class SyntheticTask:
                     synonym_placeholder: num_years * [syn_index],
                     times_placeholder: years_dec,
                 }
-                cosines = sess.run(cos, feed_dict=feed_dict)
+                cosines = sess.run(cosine_tensor, feed_dict=feed_dict)
                 neg_avg += cosines
             neg_avg /= len(datum.w2_syns_indices)
 
             predicted_vector = pos_avg - neg_avg
             predicted_vector = self.standardize(predicted_vector)
 
-            score = np.sum(np.square(pos_vector - predicted_vector))
+            score = np.sum(np.square(gold_vector - predicted_vector))
+            average_score += score
+            num_non_na_scores += 1
 
-            print(datum.w1, datum.w2, score)
+            print(datum.w1, datum.w2, "{0:.3f}".format(score))
+
+        print("----------")
+        print("Average score for fold {0}: {1:.3f}".format(self.fold, average_score/num_non_na_scores))
+        print()
