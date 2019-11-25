@@ -3,6 +3,7 @@ from random import randint, random
 from keras.preprocessing.sequence import skipgrams, make_sampling_table
 from keras.preprocessing.text import Tokenizer
 
+from evaluation.BaseEndTask import BaseEndTask
 from evaluation.SyntheticTask import SyntheticTask
 from iterators.DataIterator import DataIterator
 
@@ -50,15 +51,14 @@ class COHASampleIterator(DataIterator):
                 del self.tokenizer.word_index[w]
 
         if self.synth_task is not None:
-            self.synth_task.modify_data(self.tokenizer.word_index)
+            self.synth_task.modify_data(self.tokenizer.word_index, self.tokenizer.word_counts)
 
-        for task in self.tasks:
-            task.modify_data(self.tokenizer.word_index)
+        for task in self.tasks: #type: BaseEndTask
+            task.modify_data(self.tokenizer.word_index, self.tokenizer.word_counts)
 
     def add_to_data(self):
         file_num = randint(0, len(self.relevant_file_names) - 1)
         year, file_name = self.relevant_file_names[file_num]
-        #TODO: decide if I want to generalize year
         dec = self.year2dec(year)
         with open(file_name, "r") as coha_file:
             coha_file.readline()

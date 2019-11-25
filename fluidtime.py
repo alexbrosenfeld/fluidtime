@@ -40,7 +40,7 @@ def main():
 
     #General task arguments
     parser.add_argument('--eval_batch_size', type=int, default=32, metavar='N', help='batch size for evaluation calculation (default: 128)')
-    parser.add_argument('--seed_word_cutoff', type=int, default=1000, help='number of most frequent words used to calculate (default: 1000)')
+    parser.add_argument('--seed_vocab_size', type=int, default=1000, help='number of most frequent words used to calculate (default: 1000)')
 
 
     # SyntheticTask arguments
@@ -54,6 +54,7 @@ def main():
     parser.add_argument('--num_nearest_neighbors', type=int, default=10,
                         help='number of nearest neighbors to produce (default: 10)')
     parser.add_argument('--nearest_neighbor_output_dir', type=str, default="output/nearest_neighbors/", help='directory to save nearest neighbor results (default: output/nearest_neighbors/)')
+    parser.add_argument('--nearest_neighbor_show_cosine', default=False, help='show cosine similarity values in nearest neighbors output (default: False)', action="store_true")
 
 
 
@@ -65,7 +66,9 @@ def main():
         synth_task = SyntheticTask(synthetic_task, args)
     synch_task = SynchronicTask(args)
     speed_task = SpeedTask(args)
-    nn_task = NearestNeighborsTask(args)
+
+    # TODO: make words of interest something to enter in
+    nn_task = NearestNeighborsTask(args, ["cat", "fish"])
 
     data_iterator = COHASampleIterator(args, synth_task=synth_task, tasks=[synch_task, speed_task, nn_task])
 

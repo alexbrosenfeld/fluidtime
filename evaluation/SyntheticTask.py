@@ -70,7 +70,7 @@ class SyntheticTask(BaseEndTask):
             datum.w1_syns = self.iso_words[self.word2bless[datum.w1]]
             datum.w2_syns = self.iso_words[self.word2bless[datum.w2]]
 
-    def modify_data(self, word2id):
+    def modify_data(self, word2id, word_counts):
         for datum in self.synth_task_data:
             if datum.w1 in word2id:
                 datum.w1_index = word2id[datum.w1]

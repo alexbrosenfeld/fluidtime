@@ -16,7 +16,7 @@ class SpeedTask(BaseEndTask):
         self.seed_words = ["cat", "dog"]
         self.words_of_interest = ["cat", "dog", "fish"]
 
-    def modify_data(self, word2id):
+    def modify_data(self, word2id, word_counts):
         #TODO: make sure word lists and indices align.
         self.seed_indices = [word2id[w] for w in self.seed_words if w in word2id]
 

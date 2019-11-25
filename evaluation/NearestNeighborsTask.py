@@ -10,27 +10,44 @@ from collections import defaultdict
 
 
 class NearestNeighborsTask(BaseEndTask):
-    def __init__(self, args):
+    def __init__(self, args, words_of_interest, neighbor_vocab=None):
         super().__init__(args)
 
         #TODO: input neighbor_vocab and words_of_interest
         # self.neighbor_vocab = ["cat", "dog", "fish"]
-        self.neighbor_vocab = ['the', 'of', 'to', 'and', 'in', 'a', 'is', 'that', 'it', 'be', 'as', 'for', 'are', 'by', 'this', 'with', 'which', 'not', 'or', 'on', 'from', 'at', 'an', 'we', 'can', 'but', 'have', 'one', 'was', 'will', 'if', 'its', 'i', 'has', 'they', 'other', 'their', 'there', 'more', "'s", 'than', 'all', 'when', 'would', 'these', 'may', 'so', 'such', 'into', 'only', 'our', 'no', 'two', 'been', 'some', 'were', 'very', 'about', 'he', 'any', 'must', 'between', 'also', 'out', 'what', 'energy', 'current', 'same', 'each', 'time', 'most', 'then', 'first', 'through', 'object', 'house', 'up', 'his', 'should', 'large', 'used', 'do', 'way', 'them', 'had', 'even', 'matter', 'being', 'however', 'new', 'high', 'sortal', 'field', 'many', 'case', 'us', 'made', 'see', 'because']
+        # self.neighbor_vocab = ['the', 'of', 'to', 'and', 'in', 'a', 'is', 'that', 'it', 'be', 'as', 'for', 'are', 'by', 'this', 'with', 'which', 'not', 'or', 'on', 'from', 'at', 'an', 'we', 'can', 'but', 'have', 'one', 'was', 'will', 'if', 'its', 'i', 'has', 'they', 'other', 'their', 'there', 'more', "'s", 'than', 'all', 'when', 'would', 'these', 'may', 'so', 'such', 'into', 'only', 'our', 'no', 'two', 'been', 'some', 'were', 'very', 'about', 'he', 'any', 'must', 'between', 'also', 'out', 'what', 'energy', 'current', 'same', 'each', 'time', 'most', 'then', 'first', 'through', 'object', 'house', 'up', 'his', 'should', 'large', 'used', 'do', 'way', 'them', 'had', 'even', 'matter', 'being', 'however', 'new', 'high', 'sortal', 'field', 'many', 'case', 'us', 'made', 'see', 'because']
+        self.neighbor_vocab = neighbor_vocab
 
-        self.words_of_interest = ["fish", "cat"]
+        # self.words_of_interest = ["fish", "cat"]
+        self.words_of_interest = words_of_interest
 
-    def modify_data(self, word2id):
-        #TODO: have cutoff words if not exist.
+    def modify_data(self, word2id, word_counts):
+
+        self.words_of_interest_indices = []
+        temp_words_of_interest = []
+        for w in self.words_of_interest:
+            if w not in word2id:
+                print("Word of interest '{0}' is missing from data vocab.".format(w))
+                continue
+            self.words_of_interest_indices.append(word2id[w])
+            temp_words_of_interest.append(w)
+        self.words_of_interest = temp_words_of_interest
+
+        if self.neighbor_vocab is None:
+            wcounts = list(word_counts.items())
+            wcounts.sort(key=lambda x: x[1], reverse=True)
+            self.neighbor_vocab = [x[0] for x in wcounts[:self.args.seed_vocab_size]]
+
         self.neighbor_indices = []
         self.neighbor_index_word = {}
-
         for w in self.neighbor_vocab:
             if w not in word2id:
+                print("Neighbor word '{0}' is missing from data vocab.".format(w))
                 continue
             self.neighbor_indices.append(word2id[w])
             self.neighbor_index_word[word2id[w]] = w
 
-        self.words_of_interest_indices = [word2id[w] for w in self.words_of_interest if w in word2id]
+
 
     def evaluate(self, sess, model):
         num_words_of_interest = len(self.words_of_interest)
@@ -64,9 +81,11 @@ class NearestNeighborsTask(BaseEndTask):
             values, indices = batch_runner(sess, model, self.args.eval_batch_size, cosine_tensor, data_dict, self.args, fixed_data=fixed_data,
                                    indexed_key=synonym_placeholder, aggregation_method=AGGREGATION_METHOD.top_k)
 
-            #TODO: add option for similarities in line data.
             for word_index, word in enumerate(self.words_of_interest):
-                line_data = [self.neighbor_index_word[i] for i in indices[word_index] if word != self.neighbor_index_word[i]][:self.args.num_nearest_neighbors]
+                if self.args.nearest_neighbor_show_cosine:
+                    line_data = ["{0} ({1:.3f})".format(self.neighbor_index_word[i], cos) for i, cos in zip(indices[word_index], values[word_index]) if word != self.neighbor_index_word[i]][:self.args.num_nearest_neighbors]
+                else:
+                    line_data = [self.neighbor_index_word[i] for i in indices[word_index] if word != self.neighbor_index_word[i]][:self.args.num_nearest_neighbors]
                 nearest_neghbor_results[word].append([year] + line_data)
 
         print("Nearest Neighbors Tables")

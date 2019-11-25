@@ -1,3 +1,6 @@
+from utils.time_tool import year2dec, dec2year
+
+
 class DataIterator(object):
     def __init__(self, args):
         self.args = args
@@ -7,10 +10,10 @@ class DataIterator(object):
         pass
 
     def year2dec(self, year):
-        return (year - self.start_year)/(self.end_year-self.start_year)
+        return year2dec(year, self.args)
 
     def dec2year(self, dec):
-        return (self.end_year-self.start_year)*dec + self.start_year
+        return dec2year(dec, self.args)
 
     def get_batch(self):
         raise NotImplementedError

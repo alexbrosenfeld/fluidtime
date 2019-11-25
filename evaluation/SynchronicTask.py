@@ -21,7 +21,7 @@ class SynchronicTask(BaseEndTask):
                 w1, w2, value = line.rstrip().split()
                 self.MEN_triples.append((w1, w2, float(value)))
 
-    def modify_data(self, word2id):
+    def modify_data(self, word2id, word_counts):
         for w1, w2, score in self.MEN_triples:
             if w1 in word2id and w2 in word2id:
                 #TODO: add warnings of missing words
