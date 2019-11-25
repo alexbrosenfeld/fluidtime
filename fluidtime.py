@@ -65,7 +65,7 @@ def main():
     if synthetic_task in {1, 2, 3}:
         synth_task = SyntheticTask(synthetic_task, args)
     synch_task = SynchronicTask(args)
-    speed_task = SpeedTask(args)
+    speed_task = SpeedTask(args, ["cat", "fish"])
 
     # TODO: make words of interest something to enter in
     nn_task = NearestNeighborsTask(args, ["cat", "fish"])

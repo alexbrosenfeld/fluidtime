@@ -9,16 +9,16 @@ from utils.time_tool import get_year_ranges
 import matplotlib.pyplot as plt
 
 class SpeedTask(BaseEndTask):
-    def __init__(self, args):
+    def __init__(self, args, words_of_interest, seed_words=None):
         super().__init__(args)
 
-        #TODO: have seed words be an argument.
-        self.seed_words = ["cat", "dog"]
-        self.words_of_interest = ["cat", "dog", "fish"]
+        # self.seed_words = ["cat", "dog"]
+        self.seed_words = seed_words
+        # self.words_of_interest = ["cat", "dog", "fish"]
+        self.words_of_interest = words_of_interest
 
     def modify_data(self, word2id, word_counts):
-        #TODO: make sure word lists and indices align.
-        self.seed_indices = [word2id[w] for w in self.seed_words if w in word2id]
+
 
         temp_words_of_interest = []
         self.words_of_interest_indices = []
@@ -30,8 +30,18 @@ class SpeedTask(BaseEndTask):
                 print("Word of interest {0} missing.".format(w))
         self.words_of_interest = temp_words_of_interest
 
+        if self.seed_words is None:
+            wcounts = list(word_counts.items())
+            wcounts.sort(key=lambda x: x[1], reverse=True)
+            self.seed_words = [x[0] for x in wcounts[:self.args.seed_vocab_size]]
 
-        # self.words_of_interest_indices = [word2id[w] for w in self.words_of_interest if w in word2id]
+        self.seed_indices = []
+        for w in self.seed_words:
+            if w not in word2id:
+                print("Seed word '{0}' is missing from data vocab.".format(w))
+                continue
+            self.seed_indices.append(word2id[w])
+
 
     def evaluate(self, sess, model):
         epsilon = 1e-7

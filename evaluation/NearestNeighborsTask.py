@@ -13,7 +13,6 @@ class NearestNeighborsTask(BaseEndTask):
     def __init__(self, args, words_of_interest, neighbor_vocab=None):
         super().__init__(args)
 
-        #TODO: input neighbor_vocab and words_of_interest
         # self.neighbor_vocab = ["cat", "dog", "fish"]
         # self.neighbor_vocab = ['the', 'of', 'to', 'and', 'in', 'a', 'is', 'that', 'it', 'be', 'as', 'for', 'are', 'by', 'this', 'with', 'which', 'not', 'or', 'on', 'from', 'at', 'an', 'we', 'can', 'but', 'have', 'one', 'was', 'will', 'if', 'its', 'i', 'has', 'they', 'other', 'their', 'there', 'more', "'s", 'than', 'all', 'when', 'would', 'these', 'may', 'so', 'such', 'into', 'only', 'our', 'no', 'two', 'been', 'some', 'were', 'very', 'about', 'he', 'any', 'must', 'between', 'also', 'out', 'what', 'energy', 'current', 'same', 'each', 'time', 'most', 'then', 'first', 'through', 'object', 'house', 'up', 'his', 'should', 'large', 'used', 'do', 'way', 'them', 'had', 'even', 'matter', 'being', 'however', 'new', 'high', 'sortal', 'field', 'many', 'case', 'us', 'made', 'see', 'because']
         self.neighbor_vocab = neighbor_vocab
@@ -40,12 +39,15 @@ class NearestNeighborsTask(BaseEndTask):
 
         self.neighbor_indices = []
         self.neighbor_index_word = {}
+        temp_neighbor_vocab = []
         for w in self.neighbor_vocab:
             if w not in word2id:
                 print("Neighbor word '{0}' is missing from data vocab.".format(w))
                 continue
+            temp_neighbor_vocab.append(w)
             self.neighbor_indices.append(word2id[w])
             self.neighbor_index_word[word2id[w]] = w
+        self.neighbor_vocab = temp_neighbor_vocab
 
 
 
