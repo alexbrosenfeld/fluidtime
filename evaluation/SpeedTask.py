@@ -12,6 +12,7 @@ class SpeedTask(BaseEndTask):
     def __init__(self, args):
         super().__init__(args)
 
+        #TODO: have seed words be an argument.
         self.seed_words = ["cat", "dog"]
         self.words_of_interest = ["cat", "dog", "fish"]
 

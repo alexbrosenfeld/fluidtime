@@ -64,6 +64,7 @@ class NearestNeighborsTask(BaseEndTask):
             values, indices = batch_runner(sess, model, self.args.eval_batch_size, cosine_tensor, data_dict, self.args, fixed_data=fixed_data,
                                    indexed_key=synonym_placeholder, aggregation_method=AGGREGATION_METHOD.top_k)
 
+            #TODO: add option for similarities in line data.
             for word_index, word in enumerate(self.words_of_interest):
                 line_data = [self.neighbor_index_word[i] for i in indices[word_index] if word != self.neighbor_index_word[i]][:self.args.num_nearest_neighbors]
                 nearest_neghbor_results[word].append([year] + line_data)
