@@ -22,11 +22,21 @@ class SynchronicTask(BaseEndTask):
                 self.MEN_triples.append((w1, w2, float(value)))
 
     def modify_data(self, word2id, word_counts):
+        missing_triples_flag = False
         for w1, w2, score in self.MEN_triples:
-            if w1 in word2id and w2 in word2id:
-                #TODO: add warnings of missing words
+            if w1 not in word2id or w2 not in word2id:
+                if not missing_triples_flag:
+                    print("MEN missing triples from data vocab:")
+                    print()
+                    missing_triples_flag = True
+                w1_symbol = "O" if w1 in word2id else "X"
+                w2_symbol = "O" if w2 in word2id else "X"
+                print("Word 1: {0} ({1}) Word 2: {2} ({3}) Gold score: {4}".format(w1, w1_symbol, w2, w2_symbol, score))
+            else:
                 self.MEN_triples_reduced.append((w1, w2, score))
                 self.MEN_triples_indices.append((word2id[w1], word2id[w2], score))
+        if missing_triples_flag:
+            print()
 
     def evaluate(self, sess, model):
 
