@@ -5,9 +5,9 @@ from models.BaseModel import BaseModel
 
 
 class DiffTime(BaseModel):
-    def __init__(self, vocab_size):
-        super().__init__()
-        self.vocab_size = vocab_size
+    def __init__(self, args):
+        super().__init__(args)
+        self.vocab_size = args.vocab_size
         self.output_dim = 300
         self.h1_dim = 100
         self.h2_dim = 100

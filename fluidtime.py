@@ -44,6 +44,8 @@ def main():
     parser.add_argument('--window_size', type=int, default=4, help='window size (default: 4)')
     parser.add_argument('--verbose_level', type=int, default=1,
                         help='verbosity level. 0=only results, 1=include point in process, 2=warnings (default: 1)', choices={0, 1, 2})
+    parser.add_argument('--model_location', type=str, default="output/saved_models/model.ckpt", help='location to save model (default: output/saved_models/model.ckpt)')
+
 
     # COHASampleIterator arguments
     parser.add_argument('--coha_genre', type=str, default=None, help='which COHA genre to use (default: None)')
@@ -97,9 +99,13 @@ def main():
     data_iterator = COHASampleIterator(args, synth_task=synth_task, tasks=[synch_task, speed_task, nn_task])
 
     with tf.Session() as sess:
-        model = DiffTime(args.vocab_size)
+        model = DiffTime(args)
 
         model.train(sess, data_iterator, args.batch_size, args.num_iterations, args.report_freq)
+
+        model.save(sess)
+
+        model.load(sess)
         if synthetic_task in {1, 2, 3}:
             synth_task.evaluate(sess, model)
         synch_task.evaluate(sess, model)

@@ -88,7 +88,6 @@ class COHASampleIterator(DataIterator):
                 # Note that make_sampling_table estimates the sample probabilities using Zipf's law and does not
                 # use the word counts in determining probabilities.
                 sampling_table = make_sampling_table(self.vocab_size)
-                #TODO: Add negative sample option.
                 #Note: skipgrams does not weigh sampling probabilities by unigram probability.
                 pairs, labels = skipgrams(wids, self.vocab_size, window_size=self.args.window_size, negative_samples=5, sampling_table=sampling_table)
                 self.curr_targets += [pair[0] for pair in pairs]

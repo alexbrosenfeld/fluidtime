@@ -7,7 +7,8 @@ logger = logging.getLogger(__name__)
 from iterators.DataIterator import DataIterator
 
 class BaseModel(object):
-    def __init__(self):
+    def __init__(self, args):
+        self.args = args
         pass
 
     def get_loss(self, targets, contexts, times, labels):
@@ -55,4 +56,10 @@ class BaseModel(object):
         print("Training complete.")
         print("")
 
-    #TODO: Figure out a way to save the model.
+    def save(self, sess):
+        saver = tf.train.Saver(max_to_keep=1)
+        saver.save(sess, self.args.model_location)
+
+    def load(self, sess):
+        saver = tf.train.import_meta_graph(self.args.model_location + ".meta")
+        saver.restore(sess, self.args.model_location)
