@@ -1,5 +1,7 @@
 import tensorflow as tf
 import numpy as np
+import logging
+logger = logging.getLogger(__name__)
 
 from evaluation.BaseEndTask import BaseEndTask
 
@@ -12,9 +14,7 @@ class SpeedTask(BaseEndTask):
     def __init__(self, args, words_of_interest, seed_words=None):
         super().__init__(args)
 
-        # self.seed_words = ["cat", "dog"]
         self.seed_words = seed_words
-        # self.words_of_interest = ["cat", "dog", "fish"]
         self.words_of_interest = words_of_interest
 
     def modify_data(self, word2id, word_counts):
@@ -27,7 +27,7 @@ class SpeedTask(BaseEndTask):
                 self.words_of_interest_indices.append(word2id[w])
                 temp_words_of_interest.append(w)
             else:
-                print("Word of interest {0} missing.".format(w))
+                logger.warning("Word of interest {0} missing.".format(w))
         self.words_of_interest = temp_words_of_interest
 
         if self.seed_words is None:
@@ -38,7 +38,7 @@ class SpeedTask(BaseEndTask):
         self.seed_indices = []
         for w in self.seed_words:
             if w not in word2id:
-                print("Seed word '{0}' is missing from data vocab.".format(w))
+                logger.warning("Seed word '{0}' is missing from data vocab.".format(w))
                 continue
             self.seed_indices.append(word2id[w])
 
@@ -99,6 +99,6 @@ class SpeedTask(BaseEndTask):
             plt.ylabel("Relative speed")
             plt.savefig(os.path.join(self.args.speed_graph_output_dir, "{0}.png".format(word)))
             plt.close()
-            print("Saving speed graph for {0}.".format(word))
-        print()
+            logger.info("Saving speed graph for {0}.".format(word))
+        logger.info("")
 

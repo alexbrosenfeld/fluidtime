@@ -1,6 +1,8 @@
 import tensorflow as tf
 import numpy as np
 from scipy.stats import spearmanr
+import logging
+logger = logging.getLogger(__name__)
 
 from evaluation.BaseEndTask import BaseEndTask
 from iterators.DataIterator import DataIterator
@@ -26,17 +28,18 @@ class SynchronicTask(BaseEndTask):
         for w1, w2, score in self.MEN_triples:
             if w1 not in word2id or w2 not in word2id:
                 if not missing_triples_flag:
-                    print("MEN missing triples from data vocab:")
-                    print()
+                    logger.warning("MEN missing triples from data vocab:")
+                    logger.warning("")
                     missing_triples_flag = True
                 w1_symbol = "O" if w1 in word2id else "X"
                 w2_symbol = "O" if w2 in word2id else "X"
-                print("Word 1: {0} ({1}) Word 2: {2} ({3}) Gold score: {4}".format(w1, w1_symbol, w2, w2_symbol, score))
+                logger.warning("Word 1: {0} ({1}) Word 2: {2} ({3}) Gold score: {4}".format(w1, w1_symbol, w2, w2_symbol, score))
             else:
                 self.MEN_triples_reduced.append((w1, w2, score))
                 self.MEN_triples_indices.append((word2id[w1], word2id[w2], score))
         if missing_triples_flag:
-            print()
+            logger.warning("")
+
 
     def evaluate(self, sess, model):
 

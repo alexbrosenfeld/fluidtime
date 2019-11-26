@@ -1,5 +1,8 @@
 import tensorflow as tf
 import time
+import logging
+logger = logging.getLogger(__name__)
+
 
 from iterators.DataIterator import DataIterator
 
@@ -28,8 +31,8 @@ class BaseModel(object):
         init = tf.global_variables_initializer()
         sess.run(init)
 
-        print("Commencing training:")
-        print()
+        print("Begin training.")
+        print("")
 
         start_time = time.time()
         for step in range(0, num_iterations):
@@ -46,10 +49,10 @@ class BaseModel(object):
             duration = time.time() - start_time
 
             if step % reporting_freq == 0:
-                print('Step %d: loss = %.4f (%.3f sec)' % (step, loss_value, duration))
+                logger.info('Step %d: loss = %.4f (%.3f sec)' % (step, loss_value, duration))
 
-        print()
+        logger.info("")
         print("Training complete.")
-        print()
+        print("")
 
     #TODO: Figure out a way to save the model.

@@ -1,5 +1,7 @@
 import tensorflow as tf
 import numpy as np
+import logging
+logger = logging.getLogger(__name__)
 
 from evaluation.BaseEndTask import BaseEndTask
 
@@ -7,6 +9,8 @@ from utils.batch_runner import batch_runner, AGGREGATION_METHOD
 from utils.time_tool import get_year_ranges
 
 from collections import defaultdict
+
+
 
 
 class NearestNeighborsTask(BaseEndTask):
@@ -26,7 +30,7 @@ class NearestNeighborsTask(BaseEndTask):
         temp_words_of_interest = []
         for w in self.words_of_interest:
             if w not in word2id:
-                print("Word of interest '{0}' is missing from data vocab.".format(w))
+                logger.warning("Word of interest '{0}' is missing from data vocab.".format(w))
                 continue
             self.words_of_interest_indices.append(word2id[w])
             temp_words_of_interest.append(w)
@@ -42,7 +46,7 @@ class NearestNeighborsTask(BaseEndTask):
         temp_neighbor_vocab = []
         for w in self.neighbor_vocab:
             if w not in word2id:
-                print("Neighbor word '{0}' is missing from data vocab.".format(w))
+                logger.warning("Neighbor word '{0}' is missing from data vocab.".format(w))
                 continue
             temp_neighbor_vocab.append(w)
             self.neighbor_indices.append(word2id[w])
@@ -90,8 +94,8 @@ class NearestNeighborsTask(BaseEndTask):
                     line_data = [self.neighbor_index_word[i] for i in indices[word_index] if word != self.neighbor_index_word[i]][:self.args.num_nearest_neighbors]
                 nearest_neghbor_results[word].append([year] + line_data)
 
-        print("Nearest Neighbors Tables")
-        print()
+        print("Generating Nearest Neighbors Tables")
+        print("")
 
         import os
         for word in self.words_of_interest:
@@ -99,6 +103,6 @@ class NearestNeighborsTask(BaseEndTask):
                 print("Target", "Year", *["NN{0}".format(i) for i in range(1, self.args.num_nearest_neighbors + 1)], sep="\t", file=out_file)
                 for year, *line_data in nearest_neghbor_results[word]:
                     print(word, year, *line_data, sep="\t", file=out_file)
-                print("Saved {0} nearest neighbor data.".format(word))
-        print()
+                logger.info("Saved {0} nearest neighbor data.".format(word))
+        logger.info("")
 

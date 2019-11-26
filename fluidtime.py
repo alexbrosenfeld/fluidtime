@@ -1,6 +1,12 @@
 import argparse
+import sys
+
+import logging
+logger = logging.getLogger(__name__)
 
 import tensorflow as tf
+tf.get_logger().propagate = False
+
 
 from evaluation.SyntheticTask import SyntheticTask
 from evaluation.SynchronicTask import SynchronicTask
@@ -9,6 +15,9 @@ from evaluation.NearestNeighborsTask import NearestNeighborsTask
 
 from iterators.COHASampleIterator import COHASampleIterator
 from models.DiffTime import DiffTime
+
+
+
 
 
 # vocab_size = 100000
@@ -33,6 +42,8 @@ def main():
     parser.add_argument('--start_year', type=int, default=1900, help='start year of analysis (default: 1900)')
     parser.add_argument('--end_year', type=int, default=2009, help='end year of analysis (default: 2009)')
     parser.add_argument('--window_size', type=int, default=4, help='window size (default: 4)')
+    parser.add_argument('--verbose_level', type=int, default=1,
+                        help='verbosity level. 0=only results, 1=include point in process, 2=warnings (default: 1)', choices={0, 1, 2})
 
     # COHASampleIterator arguments
     parser.add_argument('--coha_genre', type=str, default=None, help='which COHA genre to use (default: None)')
@@ -59,6 +70,19 @@ def main():
 
 
     args = parser.parse_args()
+
+    if args.verbose_level == 0:
+        logger.disabled = True
+        warning_level = logging.CRITICAL
+    elif args.verbose_level == 1:
+        #TODO: only show info on info and not warnings
+        warning_level = logging.INFO
+    elif args.verbose_level == 2:
+        warning_level = logging.WARNING
+    else:
+        raise ValueError
+    logger.setLevel(warning_level)
+    logging.basicConfig(stream=sys.stdout, level=warning_level)
 
     synthetic_task = args.synth_task_fold
     synth_task = None
