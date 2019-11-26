@@ -46,7 +46,7 @@ class COHASampleIterator(DataIterator):
                             continue
                         self.tokenizer.fit_on_texts([line])
 
-        for w in self.tokenizer.word_index.keys():
+        for w in list(self.tokenizer.word_index.keys()):
             if self.tokenizer.word_index[w] >= self.vocab_size:
                 del self.tokenizer.word_index[w]
 

@@ -43,7 +43,7 @@ def main():
     parser.add_argument('--end_year', type=int, default=2009, help='end year of analysis (default: 2009)')
     parser.add_argument('--window_size', type=int, default=4, help='window size (default: 4)')
     parser.add_argument('--verbose_level', type=int, default=1,
-                        help='verbosity level. 0=only results, 1=include point in process, 2=warnings (default: 1)', choices={0, 1, 2})
+                        help='verbosity level. 0=only results, 1=include details and warnings (default: 1)', choices={0, 1})
     parser.add_argument('--model_location', type=str, default="output/saved_models/model.ckpt", help='location to save model (default: output/saved_models/model.ckpt)')
 
 
@@ -54,7 +54,7 @@ def main():
     #General task arguments
     parser.add_argument('--eval_batch_size', type=int, default=32, metavar='N', help='batch size for evaluation calculation (default: 128)')
     parser.add_argument('--seed_vocab_size', type=int, default=1000, help='number of most frequent words used to calculate (default: 1000)')
-
+    parser.add_argument('--words_of_interest', nargs='+', help='words to generate nearest neighbors and speed graphs', default=None, type=str)
 
     # SyntheticTask arguments
     parser.add_argument('--synth_task_fold', type=int, default=None,
@@ -77,10 +77,7 @@ def main():
         logger.disabled = True
         warning_level = logging.CRITICAL
     elif args.verbose_level == 1:
-        #TODO: only show info on info and not warnings
         warning_level = logging.INFO
-    elif args.verbose_level == 2:
-        warning_level = logging.WARNING
     else:
         raise ValueError
     logger.setLevel(warning_level)
@@ -88,29 +85,38 @@ def main():
 
     synthetic_task = args.synth_task_fold
     synth_task = None
+    synch_task = None
+    speed_task = None
+    nn_task = None
+    main_tasks = []
     if synthetic_task in {1, 2, 3}:
         synth_task = SyntheticTask(synthetic_task, args)
-    synch_task = SynchronicTask(args)
-    speed_task = SpeedTask(args, ["cat", "fish"])
+    else:
+        synch_task = SynchronicTask(args)
+        speed_task = SpeedTask(args, args.words_of_interest)
+        nn_task = NearestNeighborsTask(args, args.words_of_interest)
+        main_tasks = [synch_task, speed_task, nn_task]
 
-    # TODO: make words of interest something to enter in
-    nn_task = NearestNeighborsTask(args, ["cat", "fish"])
-
-    data_iterator = COHASampleIterator(args, synth_task=synth_task, tasks=[synch_task, speed_task, nn_task])
+    data_iterator = COHASampleIterator(args, synth_task=synth_task, tasks=main_tasks)
 
     with tf.Session() as sess:
         model = DiffTime(args)
 
         model.train(sess, data_iterator, args.batch_size, args.num_iterations, args.report_freq)
 
-        model.save(sess)
-
-        model.load(sess)
+        # model.save(sess)
+        #
+        # model.load(sess)
         if synthetic_task in {1, 2, 3}:
             synth_task.evaluate(sess, model)
-        synch_task.evaluate(sess, model)
-        speed_task.evaluate(sess, model)
-        nn_task.evaluate(sess, model)
+        else:
+            synch_task.evaluate(sess, model)
+            if args.words_of_interest is None:
+                logger.info("No words of interest are given.")
+                logger.info("Thus, nearest neighbors and speed graphs will not be created.")
+            else:
+                speed_task.evaluate(sess, model)
+                nn_task.evaluate(sess, model)
 
 
 if __name__ == '__main__':
