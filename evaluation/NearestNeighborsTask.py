@@ -15,13 +15,17 @@ from collections import defaultdict
 
 class NearestNeighborsTask(BaseEndTask):
     def __init__(self, args, words_of_interest, neighbor_vocab=None):
+        """Class to generate nearest neighbors over time.
+
+        Arguments:
+            args: argparse object, config options
+            words_of_interest: list of str, words to get nearest neighbors for
+            neighbor_vocab (optional): list of str, list of neighbors. If None, take the args.seed_vocab_size
+                most frequent words from the training data.
+        """
         super().__init__(args)
 
-        # self.neighbor_vocab = ["cat", "dog", "fish"]
-        # self.neighbor_vocab = ['the', 'of', 'to', 'and', 'in', 'a', 'is', 'that', 'it', 'be', 'as', 'for', 'are', 'by', 'this', 'with', 'which', 'not', 'or', 'on', 'from', 'at', 'an', 'we', 'can', 'but', 'have', 'one', 'was', 'will', 'if', 'its', 'i', 'has', 'they', 'other', 'their', 'there', 'more', "'s", 'than', 'all', 'when', 'would', 'these', 'may', 'so', 'such', 'into', 'only', 'our', 'no', 'two', 'been', 'some', 'were', 'very', 'about', 'he', 'any', 'must', 'between', 'also', 'out', 'what', 'energy', 'current', 'same', 'each', 'time', 'most', 'then', 'first', 'through', 'object', 'house', 'up', 'his', 'should', 'large', 'used', 'do', 'way', 'them', 'had', 'even', 'matter', 'being', 'however', 'new', 'high', 'sortal', 'field', 'many', 'case', 'us', 'made', 'see', 'because']
         self.neighbor_vocab = neighbor_vocab
-
-        # self.words_of_interest = ["fish", "cat"]
         self.words_of_interest = words_of_interest
 
     def modify_data(self, word2id, word_counts):

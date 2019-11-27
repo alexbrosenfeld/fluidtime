@@ -5,13 +5,35 @@ logger = logging.getLogger(__name__)
 
 from evaluation.BaseEndTask import BaseEndTask
 
-from utils.batch_runner import batch_runner
 from utils.time_tool import get_year_ranges
 
 import matplotlib.pyplot as plt
 
 class SpeedTask(BaseEndTask):
     def __init__(self, args, words_of_interest, seed_words=None):
+        """Class to generate nearest neighbors over time.
+
+        This class graphs the speed of a word over time.
+
+        We define speed as the norm of the derivative of the l2-normalized word vector at time t. To unpack,
+        we use word(time)/||word(time)|| as our position instead of just word(time) as cosine similarity is the
+        most common measure of word vector similarity. Speed as a norm of a derivative just comes from physics.
+
+        Although hypothetically there are ways to calculate the actual derivative in tensorflow, in practice,
+        due to the way tensorflow is set up, getting the actual derivative is slow and infeasible. Thus, we use a
+        first order finite difference approximation:
+
+        f'(x) \sim f(x+eps) - f(x-eps) / 2*eps
+
+        Absolute speed is not very informative due to the uninterpretability of word vector dimensions. Thus, we
+        use the relative speed where we standardize the speed relative to the absolute speeds of a list of seed_words.
+
+        Arguments:
+            args: argparse object, config options
+            words_of_interest: list of str, words to get speed graphs for
+            seed_words (optional): list of str, list of seed wprds. If None, take the args.seed_vocab_size
+                most frequent words from the training data. Seed words are used to standardize speeds.
+        """
         super().__init__(args)
 
         self.seed_words = seed_words
@@ -44,6 +66,8 @@ class SpeedTask(BaseEndTask):
 
 
     def evaluate(self, sess, model):
+
+        # epislon is the size of the finite difference interval
         epsilon = 1e-7
 
         years, years_dec, num_years = get_year_ranges(self.args)
@@ -52,6 +76,8 @@ class SpeedTask(BaseEndTask):
         times_before_placeholder = tf.placeholder(tf.float32, shape=(num_years,))
         times_after_placeholder = tf.placeholder(tf.float32, shape=(num_years,))
 
+        # tensor to calculate speed, which is equal to norm of derivative
+        #TODO: implement higher order finite difference method
         targets_before_vector = model.get_target_vector(targets_placeholder, times_before_placeholder)
         targets_before_vector = tf.nn.l2_normalize(targets_before_vector, 1)
         targets_after_vector = model.get_target_vector(targets_placeholder, times_after_placeholder)
@@ -59,6 +85,8 @@ class SpeedTask(BaseEndTask):
         velocity = tf.divide(tf.subtract(targets_after_vector, targets_before_vector), tf.constant(2*epsilon))
         speed = tf.norm(velocity, axis=1)
 
+        # mean_seed_speeds = E[X]
+        # squared_seed_speeds = E[X^2]
         mean_seed_speeds = None
         squared_seed_speeds = None
 
@@ -79,6 +107,7 @@ class SpeedTask(BaseEndTask):
 
         mean_seed_speeds = mean_seed_speeds/len(self.seed_indices)
         squared_seed_speeds = squared_seed_speeds/len(self.seed_indices)
+        # sd = sqrt(E[X^2] - E[X]^2)
         sd_seed_speeds = np.sqrt(squared_seed_speeds - np.square(mean_seed_speeds))
 
         print("Producing Speed Graphs")

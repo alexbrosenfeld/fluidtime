@@ -1,9 +1,26 @@
 # DiffTime
 
-Source code for our NAACL paper "Deep Neural Models of Semantic Shift".
+Source code for our NAACL paper ["Deep Neural Models of Semantic Shift"](https://www.aclweb.org/anthology/N18-1044/).
 
 
 ##Installation
+
+This code is generally meant to be used as a program you modify to explore alternative models/evaluations and not as a module to be called by external python programs.
+
+The files can be cloned via the following command:
+
+    git clone git@github.com:alexbrosenfeld/fluidtime.git
+    
+###Requirements
+
+This code was tested using the following module versions:
+1. python 3.6.8
+2. numpy 1.16.2
+3. scipy 1.2.1
+4. tensorflow 1.13.1
+5. keras 2.2.4
+
+
 
 ###Additional files
 
