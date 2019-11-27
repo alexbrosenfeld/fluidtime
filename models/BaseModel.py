@@ -7,17 +7,25 @@ logger = logging.getLogger(__name__)
 from iterators.DataIterator import DataIterator
 
 class BaseModel(object):
+    """Base class for diachronic word embedding models.
+
+    Arguments:
+        args: argparse, config options
+    """
     def __init__(self, args):
         self.args = args
         pass
 
     def get_loss(self, targets, contexts, times, labels):
+        """Loss function of model"""
         raise NotImplementedError
 
     def get_target_vector(self, target, time):
+        """Returns a vector for a target word at a given time."""
         raise NotImplementedError
 
     def train(self, sess, data_iterator:DataIterator, batch_size:int, num_iterations:int, reporting_freq:int):
+        """SGNS training modified for diachronic models"""
 
         targets_placeholder = tf.placeholder(tf.int32, shape=(batch_size,))
         contexts_placeholder = tf.placeholder(tf.int32, shape=(batch_size,))
@@ -57,9 +65,11 @@ class BaseModel(object):
         print("")
 
     def save(self, sess):
+        """Save model to self.args.model_location"""
         saver = tf.train.Saver(max_to_keep=1)
         saver.save(sess, self.args.model_location)
 
     def load(self, sess):
+        """Load model from self.args.model_location"""
         saver = tf.train.import_meta_graph(self.args.model_location + ".meta")
         saver.restore(sess, self.args.model_location)
