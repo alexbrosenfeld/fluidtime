@@ -28,8 +28,6 @@ def batch_runner(sess, model, runner_batch_size, tensor, data_dict, args, fixed_
 
     Returns:
         results: np array or list of np arrays, the aggregated results.
-    :return:
-    :rtype:
     """
     data_dict_keys = list(data_dict.keys())
 

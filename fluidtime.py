@@ -29,6 +29,7 @@ def main():
     parser.add_argument('--start_year', type=int, default=1900, help='start year of analysis (default: 1900)')
     parser.add_argument('--end_year', type=int, default=2009, help='end year of analysis (default: 2009)')
     parser.add_argument('--window_size', type=int, default=4, help='window size (default: 4)')
+    parser.add_argument('--num_negative_samples', type=int, default=5, help='number of negative samples (default: 5)')
     parser.add_argument('--verbose_level', type=int, default=1,
                         help='verbosity level. 0=only results, 1=include details and warnings (default: 1)', choices={0, 1})
     parser.add_argument('--model_location', type=str, default="output/saved_models/model.ckpt", help='location to save model (default: output/saved_models/model.ckpt)')
