@@ -19,19 +19,6 @@ from models.DiffTime import DiffTime
 
 
 
-
-# vocab_size = 100000
-# vocab_size = 100000
-# batch_size = 10000
-# batch_size = 10
-# num_iterations = 99000
-# num_iterations = 1000
-# num_iter_per_epoch = 10
-
-
-
-
-
 def main():
     parser = argparse.ArgumentParser(description='DiffTime')
     parser.add_argument('--batch_size', type=int, default=32, metavar='N', help='batch size (default: 32)')
@@ -51,7 +38,7 @@ def main():
     parser.add_argument('--coha_genre', type=str, default=None, help='which COHA genre to use (default: None)')
     parser.add_argument('--coha_data_dir', type=str, default="datasets/coha_sample/", help='directory of coha data (default: datasets/coha_sample/)')
 
-    #General task arguments
+    # General task arguments
     parser.add_argument('--eval_batch_size', type=int, default=32, metavar='N', help='batch size for evaluation calculation (default: 128)')
     parser.add_argument('--seed_vocab_size', type=int, default=1000, help='number of most frequent words used to calculate (default: 1000)')
     parser.add_argument('--words_of_interest', nargs='+', help='words to generate nearest neighbors and speed graphs', default=None, type=str)
@@ -69,10 +56,9 @@ def main():
     parser.add_argument('--nearest_neighbor_output_dir', type=str, default="output/nearest_neighbors/", help='directory to save nearest neighbor results (default: output/nearest_neighbors/)')
     parser.add_argument('--nearest_neighbor_show_cosine', default=False, help='show cosine similarity values in nearest neighbors output (default: False)', action="store_true")
 
-
-
     args = parser.parse_args()
 
+    # set up logging
     if args.verbose_level == 0:
         logger.disabled = True
         warning_level = logging.CRITICAL
@@ -83,12 +69,14 @@ def main():
     logger.setLevel(warning_level)
     logging.basicConfig(stream=sys.stdout, level=warning_level)
 
+    # instantiate evaluations
     synthetic_task = args.synth_task_fold
     synth_task = None
     synch_task = None
     speed_task = None
     nn_task = None
     main_tasks = []
+    # The synthetic task is mutually exclusive to the other tasks as only the former modifies the training data.
     if synthetic_task in {1, 2, 3}:
         synth_task = SyntheticTask(synthetic_task, args)
     else:
@@ -97,21 +85,22 @@ def main():
         nn_task = NearestNeighborsTask(args, args.words_of_interest)
         main_tasks = [synch_task, speed_task, nn_task]
 
+    # data_iterator loads the training data and produces batches for training.
     data_iterator = COHASampleIterator(args, synth_task=synth_task, tasks=main_tasks)
 
     with tf.Session() as sess:
+        # Instantiate and train model.
         model = DiffTime(args)
-
         model.train(sess, data_iterator, args.batch_size, args.num_iterations, args.report_freq)
 
-        # model.save(sess)
-        #
-        # model.load(sess)
+        # Run each evaluation.
+        # As the synthetic task modifies the training data, it is ran mutually exclusively of the other tasks.
         if synthetic_task in {1, 2, 3}:
             synth_task.evaluate(sess, model)
         else:
             synch_task.evaluate(sess, model)
-            if args.words_of_interest is None:
+            # words_of_interest must be provided for these tasks to make sense.
+            if args.words_of_interest is None or args.words_of_interest == []:
                 logger.info("No words of interest are given.")
                 logger.info("Thus, nearest neighbors and speed graphs will not be created.")
             else:
