@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import logging
 logger = logging.getLogger(__name__)
+import os
 
 from evaluation.BaseEndTask import BaseEndTask
 
@@ -112,7 +113,12 @@ class SpeedTask(BaseEndTask):
 
         print("Producing Speed Graphs")
         print()
-        import os
+
+        if not os.path.exists(self.args.speed_graph_output_dir):
+            logger.info("Creating output directory.")
+            logger.info("")
+            os.makedirs(self.args.speed_graph_output_dir)
+
         for word, word_index in zip(self.words_of_interest, self.words_of_interest_indices):
             feed_dict = {}
             feed_dict[targets_placeholder] = num_years*[word_index]

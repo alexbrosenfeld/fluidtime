@@ -4,6 +4,7 @@ from random import choices
 
 import numpy as np
 
+from evaluation.BaseEndTask import BaseEndTask
 from evaluation.SyntheticTask import SyntheticTask
 from iterators.DataIterator import DataIterator
 

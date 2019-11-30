@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import logging
 logger = logging.getLogger(__name__)
+import os
 
 from evaluation.BaseEndTask import BaseEndTask
 
@@ -101,7 +102,11 @@ class NearestNeighborsTask(BaseEndTask):
         print("Generating Nearest Neighbors Tables")
         print("")
 
-        import os
+        if not os.path.exists(self.args.nearest_neighbor_output_dir):
+            logger.info("Creating output directory.")
+            logger.info("")
+            os.makedirs(self.args.nearest_neighbor_output_dir)
+
         for word in self.words_of_interest:
             with open(os.path.join(self.args.nearest_neighbor_output_dir, "{0}.tsv".format(word)), "w") as out_file:
                 print("Target", "Year", *["NN{0}".format(i) for i in range(1, self.args.num_nearest_neighbors + 1)], sep="\t", file=out_file)
