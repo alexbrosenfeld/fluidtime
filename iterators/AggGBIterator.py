@@ -45,7 +45,7 @@ class AggGBIterator(DataIterator):
         self.rawtime_arr = np.load(self.training_data_location + "train_rawtimes.npy")
         self.num_arr = np.load(self.training_data_location + "train_nums.npy")
 
-        self.neg_sample_arr = np.load(self.training_data_location + "train_neg_arr.npy")
+        self.neg_sample_arr = np.load(self.training_data_location + "train_neg_sample_probs.npy")
 
         if self.alias_flag:
             self.alias_J = np.load(self.training_data_location + "alias_J.npy")

@@ -14,6 +14,7 @@ from evaluation.SpeedTask import SpeedTask
 from evaluation.NearestNeighborsTask import NearestNeighborsTask
 
 from iterators.COHASampleIterator import COHASampleIterator
+from iterators.AggGBIterator import AggGBIterator
 from models.DiffTime import DiffTime
 
 
@@ -92,7 +93,8 @@ def main():
         main_tasks = [synch_task, speed_task, nn_task]
 
     # data_iterator loads the training data and produces batches for training.
-    data_iterator = COHASampleIterator(args, synth_task=synth_task, tasks=main_tasks)
+    # data_iterator = COHASampleIterator(args, synth_task=synth_task, tasks=main_tasks)
+    data_iterator = AggGBIterator(args, synth_task=synth_task, tasks=main_tasks)
 
     with tf.Session() as sess:
         # Instantiate and train model.
