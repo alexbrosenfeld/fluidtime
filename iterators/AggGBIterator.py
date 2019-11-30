@@ -73,7 +73,7 @@ class AggGBIterator(DataIterator):
             alias_J, alias_q = self.neg_sampler
             neg_sample = alias_draw(alias_J, alias_q)
         else:
-            neg_sample = choices(range(0, self.neg_data_length), weights=self.neg_data_length)
+            neg_sample = choices(range(0, self.neg_data_length), weights=self.neg_sample_arr)
         return self.true_target, neg_sample, self.true_time, 0
 
     def add_datum_to_batch(self, datum):
