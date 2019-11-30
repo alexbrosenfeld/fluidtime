@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import tensorflow as tf
-tf.get_logger().propagate = False
+# tf.get_logger().propagate = False
 
 
 from evaluation.SyntheticTask import SyntheticTask
