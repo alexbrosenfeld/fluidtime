@@ -74,7 +74,7 @@ class AggGBIterator(DataIterator):
             self.neg_data_length = self.neg_sample_arr.shape[0]
 
         for task in self.tasks:  # type: BaseEndTask
-            task.modify_data(dict((w, k) for k,w in enumerate(self.vocab)), dict((w, 1) for k,w in enumerate(self.vocab)))
+            task.modify_data(dict((w, k) for k,w in enumerate(self.vocab)), dict((w, self.neg_sample_arr[k]) for k,w in enumerate(self.vocab)))
 
 
     def draw_pos_sample(self):

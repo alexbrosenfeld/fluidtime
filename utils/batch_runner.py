@@ -90,7 +90,7 @@ def batch_runner(sess, model, runner_batch_size, tensor, data_dict, args, fixed_
     # for top_k aggregation, sort the nearest neighbors
     if aggregation_method == AGGREGATION_METHOD.top_k:
         values, indices = results
-        arg_sort_indices = np.argsort(values, axis=1)
+        arg_sort_indices = np.argsort(-values, axis=1)
         values = values[np.arange(values.shape[0])[:, None], arg_sort_indices]
         indices = indices[np.arange(indices.shape[0])[:, None], arg_sort_indices]
         results = [values, indices]
