@@ -39,6 +39,11 @@ def main():
     parser.add_argument('--coha_genre', type=str, default=None, help='which COHA genre to use (default: None)')
     parser.add_argument('--coha_data_dir', type=str, default="datasets/coha_sample/", help='directory of coha data (default: datasets/coha_sample/)')
 
+    # AggGBIterator arguments
+    parser.add_argument('--GB_data_dir', type=str, default="datasets/agg_gb/", help='directory of aggregated Google Books data (default: datasets/agg_gb/)')
+    parser.add_argument('--alias_flag', default=False, help='use alias sampling (default: False)', action="store_true")
+
+
     # General task arguments
     parser.add_argument('--eval_batch_size', type=int, default=32, metavar='N', help='batch size for evaluation calculation (default: 128)')
     parser.add_argument('--seed_vocab_size', type=int, default=1000, help='number of most frequent words used to calculate (default: 1000)')
