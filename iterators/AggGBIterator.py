@@ -29,6 +29,7 @@ class AggGBIterator(DataIterator):
         self.num_neg_samples = args.num_negative_samples
         self.alias_flag = args.alias_flag
 
+        self._load_data()
 
 
 
