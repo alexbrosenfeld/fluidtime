@@ -42,6 +42,7 @@ def main():
 
     # AggGBIterator arguments
     parser.add_argument('--GB_data_dir', type=str, default="datasets/agg_gb/", help='directory of aggregated Google Books data (default: datasets/agg_gb/)')
+    parser.add_argument('--vocab_file', type=str, default="datasets/agg_gb/vocab.txt", help='vocab file name (default: datasets/agg_gb/vocab.txt)')
     parser.add_argument('--alias_flag', default=False, help='use alias sampling (default: False)', action="store_true")
 
 

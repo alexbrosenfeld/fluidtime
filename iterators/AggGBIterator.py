@@ -29,7 +29,10 @@ class AggGBIterator(DataIterator):
         self.num_neg_samples = args.num_negative_samples
         self.alias_flag = args.alias_flag
 
-        self._load_data()
+        self.vocab = []
+        self.id2vocab = {}
+
+        self._load_training_data()
 
 
 
@@ -37,8 +40,18 @@ class AggGBIterator(DataIterator):
         # constants = EngFicGooBooks()
         # self.dataiter = GoogleBooksGenerator(lbl, constants, 5, 10000, start_year=1900, end_year=2009)
 
+    def _load_constant_data(self):
 
-    def _load_data(self):
+        with open() as vocab_file:
+            word_counter = 0
+            for line in vocab_file:
+                word = line.rstrip()
+                self.vocab.append(word)
+                self.id2vocab[word] = word_counter
+                word_counter += 1
+
+
+    def _load_training_data(self):
         self.target_arr = np.load(os.path.join(self.training_data_location, "train_targets.npy"))
         self.context_arr = np.load(self.training_data_location + "train_contexts.npy")
         self.time_arr = np.load(self.training_data_location + "train_times.npy")
