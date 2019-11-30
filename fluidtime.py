@@ -54,6 +54,10 @@ def main():
     parser.add_argument('--synth_task_fold', type=int, default=None,
                         help='which synth task fold to use (default: None)', choices={1, 2, 3})
 
+    # SynchronicTask arguments
+    parser.add_argument('--MEN_location', type=str, default="datasets/synchronic_task/",
+                        help='location of MEN dataset (default: datasets/synchronic_task/)')
+
     # SpeedTask arguments
     parser.add_argument('--speed_graph_output_dir', type=str, default="output/speed_graphs/", help='directory to save speed results (default: output/speed_graphs/)')
 

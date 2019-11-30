@@ -3,6 +3,8 @@ import numpy as np
 from scipy.stats import spearmanr
 import logging
 logger = logging.getLogger(__name__)
+import os
+
 
 from evaluation.BaseEndTask import BaseEndTask
 from iterators.DataIterator import DataIterator
@@ -11,6 +13,7 @@ from utils.batch_runner import batch_runner
 class SynchronicTask(BaseEndTask):
     def __init__(self, args):
         super().__init__(args)
+        self.MEN_location = args.MEN_location
         self.test_year = 1995
         self.MEN_triples = []
         self.MEN_triples_reduced = []
@@ -18,7 +21,7 @@ class SynchronicTask(BaseEndTask):
         self._load_data()
 
     def _load_data(self):
-        with open("datasets/synchronic_task/EN-MEN-TR-3k.txt", "r") as fold_data:
+        with open(os.path.join(self.MEN_location, "EN-MEN-TR-3k.txt"), "r") as fold_data:
             for line in fold_data:
                 w1, w2, value = line.rstrip().split()
                 self.MEN_triples.append((w1, w2, float(value)))
