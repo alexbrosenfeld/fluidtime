@@ -5,10 +5,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 import tensorflow as tf
-tf_logger = logging.getLogger("tensorflow")
-tf_logger.disabled = True
+# tf_logger = logging.getLogger("tensorflow")
+# tf_logger.disabled = True
 # tf_logger.propagate = False
-
+tf.logging.set_verbosity(tf.logging.ERROR)
 
 # tf.get_logger().propagate = False
 # tf.logger().propagate = False
