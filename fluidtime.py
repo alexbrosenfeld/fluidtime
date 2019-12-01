@@ -110,6 +110,7 @@ def main():
     with tf.Session() as sess:
         # Instantiate and train model.
         model = DiffTime(args)
+        print(sess.run(tf.get_variable("h1")))
         model.train(sess, data_iterator, args.batch_size, args.num_iterations, args.report_freq)
 
         # Run each evaluation.
