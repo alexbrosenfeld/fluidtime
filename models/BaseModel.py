@@ -47,13 +47,13 @@ class BaseModel(object):
         start_time = time.time()
         for step in range(0, num_iterations):
             targets, contexts, times, labels = data_iterator.get_batch()
-            print(targets)
+            print(targets[:20])
             print()
-            print(contexts)
+            print(contexts[:20])
             print()
-            print(time)
+            print(time[:20])
             print()
-            print(labels)
+            print(labels[:20])
             exit()
             feed_dict = {
                 targets_placeholder: targets,
