@@ -8,6 +8,8 @@ from evaluation.BaseEndTask import BaseEndTask
 
 from utils.time_tool import get_year_ranges
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 class SpeedTask(BaseEndTask):
