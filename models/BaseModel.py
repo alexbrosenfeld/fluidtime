@@ -33,8 +33,6 @@ class BaseModel(object):
         labels_placeholder = tf.placeholder(tf.float32, shape=(batch_size,))
 
         lr = 1e-3
-        print(lr)
-        exit()
         optimizer = tf.train.AdamOptimizer(lr)
         loss = self.get_loss(targets_placeholder, contexts_placeholder, times_placeholder, labels_placeholder)
         tf.summary.scalar('loss', loss)
@@ -49,6 +47,14 @@ class BaseModel(object):
         start_time = time.time()
         for step in range(0, num_iterations):
             targets, contexts, times, labels = data_iterator.get_batch()
+            print(targets)
+            print()
+            print(contexts)
+            print()
+            print(time)
+            print()
+            print(labels)
+            exit()
             feed_dict = {
                 targets_placeholder: targets,
                 contexts_placeholder: contexts,
