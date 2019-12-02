@@ -22,10 +22,10 @@ class DataIterator(object):
 
     # These functions convert years to number between 0 and 1 (and vice versa)
     def year2dec(self, year):
-        return year2dec(year, self.args)
+        return year2dec(year, self.start_year, self.end_year)
 
     def dec2year(self, dec):
-        return dec2year(dec, self.args)
+        return dec2year(dec, self.start_year, self.end_year)
 
     # Each call returns a sngle training batch.
     def get_batch(self):

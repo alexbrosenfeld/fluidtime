@@ -45,6 +45,9 @@ class SpeedTask(BaseEndTask):
         self.seed_vocab_size = args.seed_vocab_size
         self.speed_graph_output_dir = args.speed_graph_output_dir
 
+        self.start_year = args.start_year
+        self.end_year = args.end_year
+
     def modify_data(self, word2id, word_counts):
 
 
@@ -76,7 +79,7 @@ class SpeedTask(BaseEndTask):
         # epislon is the size of the finite difference interval
         epsilon = 1e-7
 
-        years, years_dec, num_years = get_year_ranges(self.args)
+        years, years_dec, num_years = get_year_ranges(self.start_year, self.end_year)
 
         targets_placeholder = tf.placeholder(tf.int32, shape=(num_years,))
         times_before_placeholder = tf.placeholder(tf.float32, shape=(num_years,))

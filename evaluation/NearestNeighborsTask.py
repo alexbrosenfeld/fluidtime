@@ -36,6 +36,9 @@ class NearestNeighborsTask(BaseEndTask):
         self.nearest_neighbor_show_cosine = args.nearest_neighbor_show_cosine
         self.num_nearest_neighbors = args.num_nearest_neighbors
 
+        self.start_year = args.start_year
+        self.end_year = args.end_year
+
     def modify_data(self, word2id, word_counts):
 
         self.words_of_interest_indices = []
@@ -70,7 +73,7 @@ class NearestNeighborsTask(BaseEndTask):
     def evaluate(self, sess, model):
         num_words_of_interest = len(self.words_of_interest)
 
-        years, years_dec, num_years = get_year_ranges(self.args)
+        years, years_dec, num_years = get_year_ranges(self.start_year, self.end_year)
 
         targets_placeholder = tf.placeholder(tf.int32, shape=(num_words_of_interest,))
         targets_times_placeholder = tf.placeholder(tf.float32, shape=(num_words_of_interest,))

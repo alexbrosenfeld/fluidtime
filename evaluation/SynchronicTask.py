@@ -16,7 +16,9 @@ class SynchronicTask(BaseEndTask):
         super().__init__(args)
         self.MEN_location = args.MEN_location
         self.test_year = 1995
-        self.test_dec = year2dec(self.test_year, args)
+        self.start_year = args.start_year
+        self.end_year = args.end_year
+        self.test_dec = year2dec(self.test_year, self.start_year, self.end_year)
         self.MEN_triples = []
         self.MEN_triples_reduced = []
         self.MEN_triples_indices = []
