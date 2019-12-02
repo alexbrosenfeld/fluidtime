@@ -64,8 +64,8 @@ class SynchronicTask(BaseEndTask):
         data_dict[synonym_placeholder] = [x[1] for x in self.MEN_triples_indices]
         data_dict[times_placeholder] = len(data_dict[targets_placeholder])*[self.test_dec]
 
-        print(len(data_dict[targets_placeholder])*[self.test_dec])
-        exit()
+        # print(len(data_dict[targets_placeholder])*[self.test_dec])
+        # exit()
 
         pred_scores = batch_runner(sess, model, self.args.eval_batch_size, cosine_tensor, data_dict, self.args)
         gold_scores = [x[2] for x in self.MEN_triples_indices]
