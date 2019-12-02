@@ -67,9 +67,9 @@ class SynchronicTask(BaseEndTask):
         pred_scores = batch_runner(sess, model, self.args.eval_batch_size, cosine_tensor, data_dict, self.args)
         gold_scores = [x[2] for x in self.MEN_triples_indices]
 
-        for (w1, w2, gs), ps in zip(self.MEN_triples_reduced, pred_scores):
-            print(w1, w2, gs, ps)
-        exit()
+        # for (w1, w2, gs), ps in zip(self.MEN_triples_reduced, pred_scores):
+        #     print(w1, w2, gs, ps)
+        # exit()
 
         rho, pvalue = spearmanr(pred_scores, gold_scores)
 
