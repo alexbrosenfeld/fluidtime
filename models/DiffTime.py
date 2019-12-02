@@ -17,13 +17,16 @@ class DiffTime(BaseModel):
         self.h2_dim = 100
         self.prod_dim = 100
         self.embedding_dim = 300
+        self.oneoverembdim = 1.0 / float(self.embedding_dim)
 
 
         # variables for target/context embeddings
         with tf.variable_scope("targemb"):
-            tf.get_variable("targetemb", [self.vocab_size, self.embedding_dim])
+            tf.get_variable("targetemb", [self.vocab_size, self.embedding_dim],
+                                initializer=tf.random_uniform_initializer(-self.oneoverembdim, self.oneoverembdim))
         with tf.variable_scope("contemb"):
-            tf.get_variable("contextemb", [self.vocab_size, self.embedding_dim])
+            tf.get_variable("contextemb", [self.vocab_size, self.embedding_dim],
+                                initializer=tf.random_uniform_initializer(-self.oneoverembdim, self.oneoverembdim))
 
         # variables for time embedding method
         # As lowest layer deals directly with time as a value between 0 and 1, we want these layers to be initialized
@@ -105,7 +108,7 @@ class DiffTime(BaseModel):
         """binary cross entropy loss function"""
         loss = tf.nn.sigmoid_cross_entropy_with_logits(
             labels=labels, logits=features)
-        loss = tf.Print(loss, [loss])
+        # loss = tf.Print(loss, [loss])
         return tf.reduce_mean(loss)
 
     def get_loss(self, targets, contexts, times, labels):
