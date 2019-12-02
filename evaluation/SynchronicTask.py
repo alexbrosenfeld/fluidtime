@@ -9,12 +9,14 @@ import os
 from evaluation.BaseEndTask import BaseEndTask
 from iterators.DataIterator import DataIterator
 from utils.batch_runner import batch_runner
+from utils.time_tool import year2dec
 
 class SynchronicTask(BaseEndTask):
     def __init__(self, args):
         super().__init__(args)
         self.MEN_location = args.MEN_location
         self.test_year = 1995
+        self.test_dec = year2dec(self.test_year, args)
         self.MEN_triples = []
         self.MEN_triples_reduced = []
         self.MEN_triples_indices = []
@@ -25,6 +27,8 @@ class SynchronicTask(BaseEndTask):
             for line in fold_data:
                 w1, w2, value = line.rstrip().split()
                 self.MEN_triples.append((w1, w2, float(value)))
+        print(self.MEN_triples)
+        exit()
 
     def modify_data(self, word2id, word_counts):
         missing_triples_flag = False
@@ -60,7 +64,7 @@ class SynchronicTask(BaseEndTask):
         data_dict = {}
         data_dict[targets_placeholder] = [x[0] for x in self.MEN_triples_indices]
         data_dict[synonym_placeholder] = [x[1] for x in self.MEN_triples_indices]
-        data_dict[times_placeholder] = len(data_dict[targets_placeholder])*[(self.test_year - 1900.0)/(2009.0-1900.0)]
+        data_dict[times_placeholder] = len(data_dict[targets_placeholder])*[self.test_dec]
 
         pred_scores = batch_runner(sess, model, self.args.eval_batch_size, cosine_tensor, data_dict, self.args)
         gold_scores = [x[2] for x in self.MEN_triples_indices]
