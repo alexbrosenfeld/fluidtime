@@ -38,6 +38,11 @@ class COHASampleIterator(DataIterator):
         self.synth_task = synth_task
         self.tasks = tasks
 
+        self.coha_data_dir = args.coha_data_dir
+
+        self.window_size = args.window_size
+        self.num_negative_samples = args.num_negative_samples
+
         self.load_file_data()
 
         self.word2id = self.tokenizer.word_index
@@ -51,7 +56,7 @@ class COHASampleIterator(DataIterator):
     def load_file_data(self):
         import os
 
-        for dirName, subdirList, fileList in os.walk(self.args.coha_data_dir):
+        for dirName, subdirList, fileList in os.walk(self.coha_data_dir):
             for fname in fileList:
                 genre, year, code = fname.split("_")
                 if self.genre is not None and self.genre != genre:
@@ -122,8 +127,8 @@ class COHASampleIterator(DataIterator):
                 # use the word counts in determining probabilities.
                 sampling_table = make_sampling_table(self.vocab_size)
                 # Note: skipgrams does not weigh sampling probabilities by unigram probability.
-                pairs, labels = skipgrams(wids, self.vocab_size, window_size=self.args.window_size,
-                                          negative_samples=self.args.num_negative_samples,
+                pairs, labels = skipgrams(wids, self.vocab_size, window_size=self.window_size,
+                                          negative_samples=self.num_negative_samples,
                                           sampling_table=sampling_table)
                 # Add pair data to batch data
                 self._curr_targets += [pair[0] for pair in pairs]

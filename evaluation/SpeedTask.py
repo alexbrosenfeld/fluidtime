@@ -42,6 +42,9 @@ class SpeedTask(BaseEndTask):
         self.seed_words = seed_words
         self.words_of_interest = words_of_interest
 
+        self.seed_vocab_size = args.seed_vocab_size
+        self.speed_graph_output_dir = args.speed_graph_output_dir
+
     def modify_data(self, word2id, word_counts):
 
 
@@ -58,7 +61,7 @@ class SpeedTask(BaseEndTask):
         if self.seed_words is None:
             wcounts = list(word_counts.items())
             wcounts.sort(key=lambda x: x[1], reverse=True)
-            self.seed_words = [x[0] for x in wcounts[:self.args.seed_vocab_size]]
+            self.seed_words = [x[0] for x in wcounts[:self.seed_vocab_size]]
 
         self.seed_indices = []
         for w in self.seed_words:
@@ -116,10 +119,10 @@ class SpeedTask(BaseEndTask):
         print("Producing Speed Graphs")
         print()
 
-        if not os.path.exists(self.args.speed_graph_output_dir):
+        if not os.path.exists(self.speed_graph_output_dir):
             logger.info("Creating output directory.")
             logger.info("")
-            os.makedirs(self.args.speed_graph_output_dir)
+            os.makedirs(self.speed_graph_output_dir)
 
         for word, word_index in zip(self.words_of_interest, self.words_of_interest_indices):
             feed_dict = {}
@@ -134,7 +137,7 @@ class SpeedTask(BaseEndTask):
             plt.title("Speed over time for '{0}'".format(word))
             plt.xlabel("Year")
             plt.ylabel("Relative speed")
-            plt.savefig(os.path.join(self.args.speed_graph_output_dir, "{0}.png".format(word)))
+            plt.savefig(os.path.join(self.speed_graph_output_dir, "{0}.png".format(word)))
             plt.close()
             logger.info("Saving speed graph for {0}.".format(word))
         logger.info("")

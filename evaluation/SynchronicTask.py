@@ -21,6 +21,7 @@ class SynchronicTask(BaseEndTask):
         self.MEN_triples_reduced = []
         self.MEN_triples_indices = []
         self._load_data()
+        self.eval_batch_size = args.eval_batch_size
 
     def _load_data(self):
         with open(os.path.join(self.MEN_location, "EN-MEN-TR-3k.txt"), "r") as fold_data:
@@ -49,9 +50,9 @@ class SynchronicTask(BaseEndTask):
     def evaluate(self, sess, model):
 
 
-        targets_placeholder = tf.placeholder(tf.int32, shape=(self.args.eval_batch_size,))
-        synonym_placeholder = tf.placeholder(tf.int32, shape=(self.args.eval_batch_size,))
-        times_placeholder = tf.placeholder(tf.float32, shape=(self.args.eval_batch_size,))
+        targets_placeholder = tf.placeholder(tf.int32, shape=(self.eval_batch_size,))
+        synonym_placeholder = tf.placeholder(tf.int32, shape=(self.eval_batch_size,))
+        times_placeholder = tf.placeholder(tf.float32, shape=(self.eval_batch_size,))
 
         target_vector = model.get_target_vector(targets_placeholder, times_placeholder)
         target_vector = tf.nn.l2_normalize(target_vector, 1)
@@ -67,7 +68,7 @@ class SynchronicTask(BaseEndTask):
         # print(len(data_dict[targets_placeholder])*[self.test_dec])
         # exit()
 
-        pred_scores = batch_runner(sess, model, self.args.eval_batch_size, cosine_tensor, data_dict, self.args)
+        pred_scores = batch_runner(sess, model, self.eval_batch_size, cosine_tensor, data_dict, self.args)
         gold_scores = [x[2] for x in self.MEN_triples_indices]
 
         # for (w1, w2, gs), ps in zip(self.MEN_triples_reduced, pred_scores):

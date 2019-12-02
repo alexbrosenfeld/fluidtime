@@ -29,6 +29,13 @@ class NearestNeighborsTask(BaseEndTask):
         self.neighbor_vocab = neighbor_vocab
         self.words_of_interest = words_of_interest
 
+        self.seed_vocab_size = args.seed_vocab_size
+        self.eval_batch_size = args.eval_batch_size
+        self.nearest_neighbor_output_dir = args.nearest_neighbor_output_dir
+
+        self.nearest_neighbor_show_cosine = args.nearest_neighbor_show_cosine
+        self.num_nearest_neighbors = args.num_nearest_neighbors
+
     def modify_data(self, word2id, word_counts):
 
         self.words_of_interest_indices = []
@@ -44,7 +51,7 @@ class NearestNeighborsTask(BaseEndTask):
         if self.neighbor_vocab is None:
             wcounts = list(word_counts.items())
             wcounts.sort(key=lambda x: x[1], reverse=True)
-            self.neighbor_vocab = [x[0] for x in wcounts[:self.args.seed_vocab_size]]
+            self.neighbor_vocab = [x[0] for x in wcounts[:self.seed_vocab_size]]
 
         self.neighbor_indices = []
         self.neighbor_index_word = {}
@@ -67,8 +74,8 @@ class NearestNeighborsTask(BaseEndTask):
 
         targets_placeholder = tf.placeholder(tf.int32, shape=(num_words_of_interest,))
         targets_times_placeholder = tf.placeholder(tf.float32, shape=(num_words_of_interest,))
-        synonym_placeholder = tf.placeholder(tf.int32, shape=(self.args.eval_batch_size,))
-        synonyms_times_placeholder = tf.placeholder(tf.float32, shape=(self.args.eval_batch_size,))
+        synonym_placeholder = tf.placeholder(tf.int32, shape=(self.eval_batch_size,))
+        synonyms_times_placeholder = tf.placeholder(tf.float32, shape=(self.eval_batch_size,))
 
 
         target_vector = model.get_target_vector(targets_placeholder, targets_times_placeholder)
@@ -89,11 +96,11 @@ class NearestNeighborsTask(BaseEndTask):
             data_dict[synonym_placeholder] = [x for x in self.neighbor_indices]
             data_dict[synonyms_times_placeholder] = len(data_dict[synonym_placeholder]) * [year_dec]
 
-            values, indices = batch_runner(sess, model, self.args.eval_batch_size, cosine_tensor, data_dict, self.args, fixed_data=fixed_data,
+            values, indices = batch_runner(sess, model, self.eval_batch_size, cosine_tensor, data_dict, self.args, fixed_data=fixed_data,
                                    indexed_key=synonym_placeholder, aggregation_method=AGGREGATION_METHOD.top_k)
 
             for word_index, word in enumerate(self.words_of_interest):
-                if self.args.nearest_neighbor_show_cosine:
+                if self.nearest_neighbor_show_cosine:
                     line_data = ["{0} ({1:.3f})".format(self.neighbor_index_word[i], cos) for i, cos in zip(indices[word_index], values[word_index]) if word != self.neighbor_index_word[i]][:self.args.num_nearest_neighbors]
                 else:
                     line_data = [self.neighbor_index_word[i] for i in indices[word_index] if word != self.neighbor_index_word[i]][:self.args.num_nearest_neighbors]
@@ -102,14 +109,14 @@ class NearestNeighborsTask(BaseEndTask):
         print("Generating Nearest Neighbors Tables")
         print("")
 
-        if not os.path.exists(self.args.nearest_neighbor_output_dir):
+        if not os.path.exists(self.nearest_neighbor_output_dir):
             logger.info("Creating output directory.")
             logger.info("")
-            os.makedirs(self.args.nearest_neighbor_output_dir)
+            os.makedirs(self.nearest_neighbor_output_dir)
 
         for word in self.words_of_interest:
-            with open(os.path.join(self.args.nearest_neighbor_output_dir, "{0}.tsv".format(word)), "w") as out_file:
-                print("Target", "Year", *["NN{0}".format(i) for i in range(1, self.args.num_nearest_neighbors + 1)], sep="\t", file=out_file)
+            with open(os.path.join(self.nearest_neighbor_output_dir, "{0}.tsv".format(word)), "w") as out_file:
+                print("Target", "Year", *["NN{0}".format(i) for i in range(1, self.num_nearest_neighbors + 1)], sep="\t", file=out_file)
                 for year, *line_data in nearest_neghbor_results[word]:
                     print(word, year, *line_data, sep="\t", file=out_file)
                 logger.info("Saved {0} nearest neighbor data.".format(word))

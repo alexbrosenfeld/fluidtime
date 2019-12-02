@@ -13,7 +13,7 @@ class BaseModel(object):
         args: argparse, config options
     """
     def __init__(self, args):
-        self.args = args
+        self.model_save_location = args.model_location
         pass
 
     def get_loss(self, targets, contexts, times, labels):
@@ -66,11 +66,11 @@ class BaseModel(object):
         print("")
 
     def save(self, sess):
-        """Save model to self.args.model_location"""
+        """Save model to self.model_save_location"""
         saver = tf.train.Saver(max_to_keep=1)
-        saver.save(sess, self.args.model_location)
+        saver.save(sess, self.model_save_location)
 
     def load(self, sess):
-        """Load model from self.args.model_location"""
-        saver = tf.train.import_meta_graph(self.args.model_location + ".meta")
-        saver.restore(sess, self.args.model_location)
+        """Load model from self.model_save_location"""
+        saver = tf.train.import_meta_graph(self.model_save_location + ".meta")
+        saver.restore(sess, self.model_save_location)
