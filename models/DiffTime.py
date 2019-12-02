@@ -38,16 +38,25 @@ class DiffTime(BaseModel):
                         initializer=tf.constant_initializer(RANDA))
         tf.get_variable("h1/bias", [self.h1_dim],
                         initializer=tf.constant_initializer(RANDB))
-        tf.get_variable("h2/kernel", [self.h1_dim, self.h2_dim])
-        tf.get_variable("h2/bias", [self.h2_dim])
+        h2_glorot_val = tf.sqrt(2.0 / (self.h1_dim))
+        tf.get_variable("h2/kernel", [self.h1_dim, self.h2_dim],
+                                    initializer=tf.random_normal_initializer(0.0, h2_glorot_val))
+        tf.get_variable("h2/bias", [self.h2_dim],
+                        initializer=tf.zeros_initializer())
 
         # variables to convert word embedding to matrix
-        tf.get_variable("evoke/kernel", [self.embedding_dim, self.h2_dim * self.prod_dim])
-        tf.get_variable("evoke/bias", [self.h2_dim * self.prod_dim])
+        evoke_glorot_val = tf.sqrt(2.0 / (self.embedding_dim))
+        tf.get_variable("evoke/kernel", [self.embedding_dim, self.h2_dim * self.prod_dim],
+                            initializer=tf.random_normal_initializer(0.0, evoke_glorot_val))
+        tf.get_variable("evoke/bias", [self.h2_dim * self.prod_dim],
+                        initializer=tf.zeros_initializer())
 
         # variables for last linear layer
-        tf.get_variable("last_out/kernel", [self.prod_dim, self.output_dim])
-        tf.get_variable("last_out/bias", [self.output_dim])
+        last_out_glorot_val = tf.sqrt(2.0 / (self.prod_dim))
+        tf.get_variable("last_out/kernel", [self.prod_dim, self.output_dim],
+                            initializer=tf.random_normal_initializer(0.0, last_out_glorot_val))
+        tf.get_variable("last_out/bias", [self.output_dim],
+                        initializer=tf.zeros_initializer())
 
 
 
