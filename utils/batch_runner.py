@@ -8,8 +8,8 @@ from enum import Enum
 AGGREGATION_METHOD = Enum("AGGREGATION_METHOD", "concatenate top_k")
 
 
-def batch_runner(sess, model, runner_batch_size, tensor, data_dict, args, fixed_data=None, indexed_key=None,
-                 aggregation_method=AGGREGATION_METHOD.concatenate):
+def batch_runner(sess, model, runner_batch_size, tensor, data_dict, fixed_data=None, indexed_key=None,
+                 aggregation_method=AGGREGATION_METHOD.concatenate, num_nearest_neighbors=None):
     """Run a tf model with batching the input data.
 
     In practice, it's often infeasible to load every entry into memory.
@@ -65,15 +65,15 @@ def batch_runner(sess, model, runner_batch_size, tensor, data_dict, args, fixed_
                 batch_result = batch_result[:, :-size_adjustment]
             raw_indices = np.tile(np.array(feed_dict[indexed_key]), (batch_result.shape[0], 1))
             if results is None:
-                arg_part_indices = np.argpartition(batch_result, -args.num_nearest_neighbors, axis=1)[:,
-                                   -args.num_nearest_neighbors:]
+                arg_part_indices = np.argpartition(batch_result, -num_nearest_neighbors, axis=1)[:,
+                                   -num_nearest_neighbors:]
                 values = batch_result[np.arange(batch_result.shape[0])[:, None], arg_part_indices]
                 indices = raw_indices[np.arange(raw_indices.shape[0])[:, None], arg_part_indices]
             else:
                 raw_values = np.concatenate((results[0], batch_result), axis=1)
                 raw_indices = np.concatenate((results[1], raw_indices), axis=1)
-                arg_part_indices = np.argpartition(raw_values, -args.num_nearest_neighbors, axis=1)[:,
-                                   -args.num_nearest_neighbors:]
+                arg_part_indices = np.argpartition(raw_values, -num_nearest_neighbors, axis=1)[:,
+                                   -num_nearest_neighbors:]
                 values = raw_values[np.arange(raw_values.shape[0])[:, None], arg_part_indices]
                 indices = raw_indices[np.arange(raw_indices.shape[0])[:, None], arg_part_indices]
             results = [values, indices]

@@ -99,8 +99,9 @@ class NearestNeighborsTask(BaseEndTask):
             data_dict[synonym_placeholder] = [x for x in self.neighbor_indices]
             data_dict[synonyms_times_placeholder] = len(data_dict[synonym_placeholder]) * [year_dec]
 
-            values, indices = batch_runner(sess, model, self.eval_batch_size, cosine_tensor, data_dict, self.args, fixed_data=fixed_data,
-                                   indexed_key=synonym_placeholder, aggregation_method=AGGREGATION_METHOD.top_k)
+            values, indices = batch_runner(sess, model, self.eval_batch_size, cosine_tensor, data_dict, fixed_data=fixed_data,
+                                   indexed_key=synonym_placeholder, aggregation_method=AGGREGATION_METHOD.top_k,
+                                           num_nearest_neighbors=self.num_nearest_neighbors)
 
             for word_index, word in enumerate(self.words_of_interest):
                 if self.nearest_neighbor_show_cosine:

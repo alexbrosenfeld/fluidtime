@@ -70,7 +70,7 @@ class SynchronicTask(BaseEndTask):
         # print(len(data_dict[targets_placeholder])*[self.test_dec])
         # exit()
 
-        pred_scores = batch_runner(sess, model, self.eval_batch_size, cosine_tensor, data_dict, self.args)
+        pred_scores = batch_runner(sess, model, self.eval_batch_size, cosine_tensor, data_dict)
         gold_scores = [x[2] for x in self.MEN_triples_indices]
 
         # for (w1, w2, gs), ps in zip(self.MEN_triples_reduced, pred_scores):
