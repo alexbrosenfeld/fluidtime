@@ -105,6 +105,7 @@ class DiffTime(BaseModel):
         """binary cross entropy loss function"""
         loss = tf.nn.sigmoid_cross_entropy_with_logits(
             labels=labels, logits=features)
+        loss = tf.Print(loss, [loss])
         return tf.reduce_mean(loss)
 
     def get_loss(self, targets, contexts, times, labels):

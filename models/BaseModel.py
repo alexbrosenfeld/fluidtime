@@ -32,7 +32,7 @@ class BaseModel(object):
         times_placeholder = tf.placeholder(tf.float32, shape=(batch_size,))
         labels_placeholder = tf.placeholder(tf.float32, shape=(batch_size,))
 
-        lr = 1e-2
+        lr = 1e-3
         optimizer = tf.train.AdamOptimizer(lr)
         loss = self.get_loss(targets_placeholder, contexts_placeholder, times_placeholder, labels_placeholder)
         tf.summary.scalar('loss', loss)
