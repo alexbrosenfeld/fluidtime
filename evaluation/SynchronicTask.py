@@ -27,8 +27,6 @@ class SynchronicTask(BaseEndTask):
             for line in fold_data:
                 w1, w2, value = line.rstrip().split()
                 self.MEN_triples.append((w1, w2, float(value)))
-        print(self.MEN_triples)
-        exit()
 
     def modify_data(self, word2id, word_counts):
         missing_triples_flag = False
@@ -68,6 +66,9 @@ class SynchronicTask(BaseEndTask):
 
         pred_scores = batch_runner(sess, model, self.args.eval_batch_size, cosine_tensor, data_dict, self.args)
         gold_scores = [x[2] for x in self.MEN_triples_indices]
+
+        print([w1, w2, gs, ps] for (w1, w2, gs), ps in zip(self.MEN_triples_reduced, pred_scores))
+        exit()
 
         rho, pvalue = spearmanr(pred_scores, gold_scores)
 
