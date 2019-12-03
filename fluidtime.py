@@ -22,11 +22,11 @@ from iterators.COHASampleIterator import COHASampleIterator
 from iterators.AggGBIterator import AggGBIterator
 from models.DiffTime import DiffTime
 
-from utils.configparser import args
+from utils.configparser import parser
 
 
 def main():
-
+    args = parser.parse_args()
 
     # set up logging
     if args.verbose_level == 0:

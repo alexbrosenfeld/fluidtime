@@ -47,4 +47,4 @@ parser.add_argument('--num_nearest_neighbors', type=int, default=10,
 parser.add_argument('--nearest_neighbor_output_dir', type=str, default="output/nearest_neighbors/", help='directory to save nearest neighbor results (default: output/nearest_neighbors/)')
 parser.add_argument('--nearest_neighbor_show_cosine', default=False, help='show cosine similarity values in nearest neighbors output (default: False)', action="store_true")
 
-args = parser.parse_args()
+# args = parser.parse_args()
