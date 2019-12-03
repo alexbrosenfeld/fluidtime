@@ -1,12 +1,14 @@
 import unittest
 import numpy as np
 
-from iterators.COHASampleIterator import COHASampleIterator as IterTest
+from evaluation.SpeedTask import SpeedTask
+from iterators.COHASampleIterator import COHASampleIterator as IterTestBase
 
 from utils.configparser import parser
 
 
-class IterTestObj(IterTest):
+class IterTestWrapper(IterTestBase):
+    task_args = ["--words_of_interest", "cat"]
     def __init__(self, arg_list, synth_task, tasks):
         iter_spec_args = ["--coha_data_dir", "../../datasets/coha_sample/", "--coha_genre", "nf"]
 
@@ -14,13 +16,16 @@ class IterTestObj(IterTest):
         super().__init__(args, synth_task, tasks)
 
 
-class GetBatchTests(unittest.TestCase):
+class NoTasksTests(unittest.TestCase):
     def setUp(self):
         self.batch_size = 100
         arg_list = ["--batch_size", str(self.batch_size)]
-        self.test_iter = IterTestObj(arg_list, None, [])
+        self.test_iter = IterTestWrapper(arg_list, None, [])
 
-    def test_iter_01_get_batch_implemented(self):
+    def test_01_superclass(self):
+        self.assertTrue(any(map(lambda cls: cls.__name__ == "DataIterator", self.test_iter.__class__.__mro__)))
+
+    def test_02_get_batch_implemented(self):
         try:
             self.test_iter.get_batch()
         except NotImplementedError:
@@ -50,6 +55,17 @@ class GetBatchTests(unittest.TestCase):
         self.assertTrue(all(map(lambda x: 1.0 >= x and x >= 0.0, times)), "times should be floats between 0 and 1.")
         self.assertTrue(all(map(lambda x: x == 0 or x == 1, labels)), "labels should be 0 or 1")
 
+class TaskModTests(unittest.TestCase):
+    def setUp(self):
+        pass
+
+    def test_01_modify(self):
+        arg_list = IterTestWrapper.task_args
+        args = parser.parse_args(arg_list)
+        self.speed_task = SpeedTask(args, args.words_of_interest)
+        self.assertFalse(hasattr(self.speed_task, "words_of_interest_indices"))
+        self.test_iter = IterTestWrapper(arg_list, None, [self.speed_task])
+        self.assertTrue(hasattr(self.speed_task, "words_of_interest_indices"), "Iterator does not call task.modify_data")
 
 
 
