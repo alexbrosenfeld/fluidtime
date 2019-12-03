@@ -82,11 +82,8 @@ def batch_runner(sess, model, runner_batch_size, tensor, data_dict, fixed_data=N
                 batch_result = batch_result[:-size_adjustment]
             if results is None:
                 results = batch_result
-                print(results)
             else:
                 results = np.concatenate((results, batch_result))
-                print(results)
-                exit()
         else:
             raise ValueError
 
