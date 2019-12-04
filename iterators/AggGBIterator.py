@@ -1,6 +1,6 @@
 import os
 import sys
-from random import choices
+from random import choices, random
 
 import numpy as np
 
@@ -76,6 +76,7 @@ class AggGBIterator(DataIterator):
         self.num_neg_samples = args.num_negative_samples
         self.alias_flag = args.alias_flag
         self.vocab_size = args.vocab_size
+        self.synth_task = synth_task
 
         self.vocab = []
         # TODO: Check if redundant.
@@ -126,8 +127,13 @@ class AggGBIterator(DataIterator):
 
         #TODO: Check vocab matches vocab size
 
+        word2id = dict((w, k) for k,w in enumerate(self.vocab))
+        word2freq = dict((w, self.neg_sample_arr[k]) for k,w in enumerate(self.vocab))
+        if self.synth_task is not None:
+            self.synth_task.modify_data(word2id, word2freq)
+
         for task in self.tasks:  # type: BaseEndTask
-            task.modify_data(dict((w, k) for k,w in enumerate(self.vocab)), dict((w, self.neg_sample_arr[k]) for k,w in enumerate(self.vocab)))
+            task.modify_data(word2id, word2freq)
 
 
     def draw_pos_sample(self):
@@ -142,6 +148,37 @@ class AggGBIterator(DataIterator):
         self.true_time = self.time_arr[curr_index]
         self.true_raw_time = self.rawtime_arr[curr_index]
         # [times, targets, contexts, vals]
+        if self.synth_task is not None:
+            if self.true_target in self.synth_task.synth_task_w1_index_map:
+                datum = self.synth_task.synth_task_w1_index_map[self.true_target]
+                if datum.w1_probs[self.true_raw_time] > random():
+                    "do nothing"
+                else:
+                    return self.draw_pos_sample()
+            if self.true_target in self.synth_task.synth_task_w1_index_map:
+                datum = self.synth_task.synth_task_w1_index_map[self.true_target]
+                if datum.w1_probs[self.true_raw_time] > random():
+                    self.true_target = datum.w1_index
+                else:
+                    return self.draw_pos_sample()
+
+
+            # words = line.rstrip().split()
+            # adjusted_line = []
+            # for word in words:
+            #     if word in self.synth_task.synth_task_words:
+            #         if word in self.synth_task.synth_task_w1_map:
+            #             datum = self.synth_task.synth_task_data[self.synth_task.synth_task_w1_map[word]]
+            #             if datum.w1_probs[year] > random():
+            #                 adjusted_line.append(word)
+            #         else:
+            #             datum = self.synth_task.synth_task_data[self.synth_task.synth_task_w2_map[word]]
+            #             if datum.w2_probs[year] > random():
+            #                 adjusted_line.append(datum.w1)
+            #
+            #     else:
+            #         adjusted_line.append(word)
+            # line = " ".join(adjusted_line)
         return self.true_target, self.true_context, self.true_time, 1
 
     def draw_neg_sample(self):

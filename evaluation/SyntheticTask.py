@@ -71,6 +71,8 @@ class SyntheticTask(BaseEndTask):
             datum.w2_syns = self.iso_words[self.word2bless[datum.w2]]
 
     def modify_data(self, word2id, word_counts):
+        self.synth_task_w1_index_map = {}
+        self.synth_task_w2_index_map = {}
         for datum in self.synth_task_data:
             if datum.w1 in word2id:
                 datum.w1_index = word2id[datum.w1]
@@ -80,6 +82,8 @@ class SyntheticTask(BaseEndTask):
                                         w in word2id)
             datum.w2_syns_indices = set(word2id[w] for w in datum.w2_syns if
                                         w in word2id)
+            self.synth_task_w1_index_map[datum.w1_index] = datum
+            self.synth_task_w2_index_map[datum.w2_index] = datum
 
     def add_datum(self, w1, w2, m, s):
         new_index = len(self.synth_task_data)
