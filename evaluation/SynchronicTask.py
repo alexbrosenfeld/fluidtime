@@ -57,9 +57,9 @@ class SynchronicTask(BaseEndTask):
         times_placeholder = tf.placeholder(tf.float32, shape=(self.eval_batch_size,))
 
         target_vector = model.get_target_vector(targets_placeholder, times_placeholder)
-        target_vector = tf.nn.l2_normalize(target_vector, 1)
+        target_vector = tf.nn.l2_normalize(target_vector, dim=1)
         syns_vector = model.get_target_vector(synonym_placeholder, times_placeholder)
-        syns_vector = tf.nn.l2_normalize(syns_vector, 1)
+        syns_vector = tf.nn.l2_normalize(syns_vector, dim=1)
         cosine_tensor = tf.reduce_sum(tf.multiply(target_vector, syns_vector), axis=1)
 
         # for x, y in zip(self.MEN_triples_reduced, self.MEN_triples_indices):
