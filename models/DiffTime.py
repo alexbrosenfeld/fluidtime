@@ -17,8 +17,7 @@ class DiffTime(BaseModel):
         self.h2_dim = 100
         self.prod_dim = 100
         self.embedding_dim = 300
-        # self.oneoverembdim = 1.0 / float(self.embedding_dim)
-        self.oneoverembdim = 0.1
+        self.oneoverembdim = 1.0 / float(self.embedding_dim)
 
 
         # variables for target/context embeddings

@@ -62,10 +62,6 @@ class SynchronicTask(BaseEndTask):
         syns_vector = tf.nn.l2_normalize(syns_vector, dim=1)
         cosine_tensor = tf.reduce_sum(tf.multiply(target_vector, syns_vector), axis=1)
 
-        # for x, y in zip(self.MEN_triples_reduced, self.MEN_triples_indices):
-        #     print(x, y)
-        # exit()
-
         data_dict = {}
         data_dict[targets_placeholder] = [x[0] for x in self.MEN_triples_indices]
         data_dict[synonym_placeholder] = [x[1] for x in self.MEN_triples_indices]
@@ -73,10 +69,6 @@ class SynchronicTask(BaseEndTask):
 
         pred_scores = batch_runner(sess, model, self.eval_batch_size, cosine_tensor, data_dict)
         gold_scores = [x[2] for x in self.MEN_triples_indices]
-
-        for (w1, w2, gold_score), pred_score in zip(self.MEN_triples_reduced, pred_scores):
-            print(w1, w2, gold_score, pred_score)
-        print()
 
         rho, pvalue = spearmanr(pred_scores, gold_scores)
 

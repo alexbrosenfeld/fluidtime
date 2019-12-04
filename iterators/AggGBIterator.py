@@ -75,6 +75,7 @@ class AggGBIterator(DataIterator):
         self.vocab_file_name = args.vocab_file
         self.num_neg_samples = args.num_negative_samples
         self.alias_flag = args.alias_flag
+        self.vocab_size = args.vocab_size
 
         self.vocab = []
         # TODO: Check if redundant.
@@ -101,6 +102,8 @@ class AggGBIterator(DataIterator):
                 self.id2vocab[word] = word_counter
                 word_counter += 1
 
+        assert len(self.vocab) == self.vocab_size
+
 
     def _load_training_data(self):
         """Load preprocessed training data into memory.
@@ -120,6 +123,8 @@ class AggGBIterator(DataIterator):
         else:
             self.train_data_length = self.target_arr.shape[0]
             self.neg_data_length = self.neg_sample_arr.shape[0]
+
+        #TODO: Check vocab matches vocab size
 
         for task in self.tasks:  # type: BaseEndTask
             task.modify_data(dict((w, k) for k,w in enumerate(self.vocab)), dict((w, self.neg_sample_arr[k]) for k,w in enumerate(self.vocab)))
