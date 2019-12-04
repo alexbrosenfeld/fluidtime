@@ -62,9 +62,9 @@ class SynchronicTask(BaseEndTask):
         syns_vector = tf.nn.l2_normalize(syns_vector, 1)
         cosine_tensor = tf.reduce_sum(tf.multiply(target_vector, syns_vector), axis=1)
 
-        for x in self.MEN_triples_indices:
-            print(x)
-        exit()
+        # for x, y in zip(self.MEN_triples_reduced, self.MEN_triples_indices):
+        #     print(x, y)
+        # exit()
 
         data_dict = {}
         data_dict[targets_placeholder] = [x[0] for x in self.MEN_triples_indices]
